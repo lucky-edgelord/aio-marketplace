@@ -1,0 +1,186 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "vectoria",
+  "name": "Vectoria",
+  "summary": "A talking pixel-art expert on Vector bots and WebXDC: !vec answers in text, !vectoria in a lip-synced video.",
+  "group": "Fun",
+  "release": "1.0.2",
+  "description": "Vectoria knows the Vector SDKs (Python, Rust, JS) and WebXDC Mini Apps, and searches the web when her notes don't cover something. Ask with !vec for a text answer (code included), or !vectoria for a short video: her sprite lip-syncs to a retro SAM voice under a VHS filter, with C64-style subtitles. Reply to any of her answers to keep talking. She remembers each person (!vecmemory, !vecforget), and 👍/👎 votes are kept.\n\nNeeds: an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. For videos: ffmpeg, plus her voice, which an owner builds once with !vecvoice (git and a C compiler). Without those she still answers in text. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "homepage": "https://lucky-edgelord.github.io/aio-marketplace/",
+  "tags": [
+    "ai",
+    "assistant",
+    "video",
+    "webxdc",
+    "developers"
+  ],
+  "icon": "media/vectoria/icon.png",
+  "images": [
+    {
+      "src": "media/vectoria/talking.webp",
+      "caption": "!vectoria answers in a lip-synced video with a retro voice"
+    },
+    {
+      "src": "media/vectoria/subtitles.jpg",
+      "caption": "VHS look and C64-style subtitles"
+    },
+    {
+      "src": "media/vectoria/dashboard.jpg",
+      "caption": "Her page on the dashboard: status, latest questions and votes"
+    }
+  ],
+  "settings": [
+    {
+      "key": "ollama_host",
+      "label": "Ollama address",
+      "type": "text",
+      "help": "ollama.com (cloud, needs a key) or your own server, like http://localhost:11434",
+      "default": "https://ollama.com"
+    },
+    {
+      "key": "model",
+      "label": "Model",
+      "type": "text",
+      "default": "gpt-oss:120b"
+    },
+    {
+      "key": "api_key_env",
+      "label": "API key variable",
+      "type": "text",
+      "help": "Name of the .env variable with the Ollama key",
+      "default": "OLLAMA_API_KEY",
+      "private": true
+    },
+    {
+      "key": "web_tools",
+      "label": "Search the web",
+      "type": "bool",
+      "help": "Lets her search and read pages through Ollama's web API (needs the key)",
+      "default": true
+    },
+    {
+      "key": "knowledge",
+      "label": "Use her notes",
+      "type": "bool",
+      "help": "Built-in notes on the Vector SDKs and WebXDC",
+      "default": true
+    },
+    {
+      "key": "channels",
+      "label": "Only in these channels",
+      "type": "list",
+      "help": "Channel names or ids; empty means everywhere",
+      "default": []
+    },
+    {
+      "key": "allow_dms",
+      "label": "Answer in DMs",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "key": "compact_after",
+      "label": "Summarise memory after",
+      "type": "int",
+      "help": "Exchanges with one person before older ones are summarised into her memory of them",
+      "min": 2,
+      "max": 50,
+      "default": 8
+    },
+    {
+      "key": "keep_recent",
+      "label": "Exchanges kept word for word",
+      "type": "int",
+      "min": 0,
+      "max": 20,
+      "default": 2
+    },
+    {
+      "key": "max_sentences",
+      "label": "Sentences per video",
+      "type": "int",
+      "min": 1,
+      "max": 6,
+      "default": 3
+    },
+    {
+      "key": "video_size",
+      "label": "Video size (px)",
+      "type": "int",
+      "min": 128,
+      "max": 512,
+      "default": 512
+    },
+    {
+      "key": "vhs",
+      "label": "VHS look",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "vhs_strength",
+      "label": "VHS strength",
+      "type": "number",
+      "min": 0,
+      "max": 2,
+      "default": 1.0
+    },
+    {
+      "key": "subtitles",
+      "label": "Subtitles",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "max_kb",
+      "label": "Largest video (KB)",
+      "type": "int",
+      "help": "0 for no limit",
+      "min": 0,
+      "max": 5000,
+      "default": 450
+    },
+    {
+      "key": "pitch",
+      "label": "Voice pitch",
+      "type": "int",
+      "min": 0,
+      "max": 255,
+      "default": 40
+    },
+    {
+      "key": "speed",
+      "label": "Voice speed",
+      "type": "int",
+      "min": 1,
+      "max": 255,
+      "default": 72
+    },
+    {
+      "key": "mouth",
+      "label": "Voice mouth",
+      "type": "int",
+      "min": 0,
+      "max": 255,
+      "default": 150
+    },
+    {
+      "key": "throat",
+      "label": "Voice throat",
+      "type": "int",
+      "min": 0,
+      "max": 255,
+      "default": 155
+    },
+    {
+      "key": "sam_bin",
+      "label": "SAM program",
+      "type": "text",
+      "help": "Path to a sam binary; blank uses the one !vecvoice builds",
+      "default": ""
+    }
+  ]
+}

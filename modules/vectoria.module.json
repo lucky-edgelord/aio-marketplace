@@ -5,7 +5,7 @@
   "name": "Vectoria",
   "summary": "A talking pixel-art expert on Vector bots and WebXDC: !vec answers in text, !vectoria in a lip-synced video.",
   "group": "Fun",
-  "release": "1.0.1",
+  "release": "1.0.2",
   "description": "Vectoria knows the Vector SDKs (Python, Rust, JS) and WebXDC Mini Apps, and searches the web when her notes don't cover something. Ask with !vec for a text answer (code included), or !vectoria for a short video: her sprite lip-syncs to a retro SAM voice under a VHS filter, with C64-style subtitles. Reply to any of her answers to keep talking. She remembers each person (!vecmemory, !vecforget), and 👍/👎 votes are kept.\n\nNeeds: an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. For videos: ffmpeg, plus her voice, which an owner builds once with !vecvoice (git and a C compiler). Without those she still answers in text. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
   "author": "lucky-edgelord",
   "license": "MIT",
@@ -26,6 +26,10 @@
     {
       "src": "media/vectoria/subtitles.jpg",
       "caption": "VHS look and C64-style subtitles"
+    },
+    {
+      "src": "media/vectoria/dashboard.jpg",
+      "caption": "Her page on the dashboard: status, latest questions and votes"
     }
   ],
   "settings": [

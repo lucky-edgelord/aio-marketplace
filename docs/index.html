@@ -92,7 +92,7 @@ function icon(m) {
 const pictures = (m) => (m.images || []).filter((i) => media(i.src));
 function card(m) {
   const counts = [m.commands.length && plural(m.commands.length, "command"), m.autoresponders && plural(m.autoresponders, "autoresponder"),
-    m.timers && plural(m.timers, "timer"), m.files.length && plural(m.files.length, "Python file")].filter(Boolean).join(" · ");
+    m.timers && plural(m.timers, "timer"), m.files.length && plural(m.files.length, "code file")].filter(Boolean).join(" · ");
   const pics = pictures(m);
   return el("article", null,
     pics.length ? el("div", { class: "cover" }, el("img", { src: media(pics[0].src), alt: pics[0].caption || "", loading: "lazy" }),

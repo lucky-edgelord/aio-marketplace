@@ -12,6 +12,7 @@
     "fun",
     "games"
   ],
+  "icon": "🎱",
   "commands": [
     {
       "name": "8ball",

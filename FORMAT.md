@@ -8,6 +8,7 @@ A module is a UTF-8 JSON object in a file called `<id>.module.json`, up to 1 MB.
 | `id` | 2–32 of `a-z 0-9 _`, starting with a letter; not a built-in module's name. Made from `name` if missing. |
 | `name`, `summary`, `group`, `release` | What it's called, one line about it, where it's listed (Community, Fun, Members, Safety, Integrations), and its version (`1.2.0`). |
 | `description`, `author`, `license`, `homepage`, `tags` | Shown in the marketplace. |
+| `icon`, `images` | Pictures for the marketplace. `icon` is an emoji (`"🎱"`) or a picture; `images` are up to six screenshots or previews, each `"media/…"` or `{ "src": "media/…", "caption": "…" }`. Pictures live in the marketplace next to the modules (`modules/media/<id>/`, PNG, JPEG, WebP or GIF, animated is fine, under 800 KB each). |
 | `provides` | A job it does instead of a built-in module, like `automod`. Only one module does each job. |
 | `settings` | `[{ "key", "label", "type", "default", "help", "options", "min", "max", "private" }]`. Types: `text` `longtext` `int` `number` `bool` `channel` `enum` `list`. Editable on the dashboard; `private` ones (and keys that look like tokens or passwords) are never exported. |
 | `commands` | `{ "name", "aliases", "help", "reply" or "replies", "card": {"title", "color"}, "react", "cooldown", "roles", "channels", "dm", "delete_trigger" }` |

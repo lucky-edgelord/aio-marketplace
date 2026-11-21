@@ -15,6 +15,7 @@
     "ai",
     "moderation"
   ],
+  "icon": "🛡️",
   "settings": [
     {
       "key": "base_url",

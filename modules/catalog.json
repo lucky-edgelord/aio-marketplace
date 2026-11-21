@@ -25,6 +25,8 @@
    ],
    "kind": "data",
    "provides": "",
+   "icon": "💬",
+   "images": [],
    "commands": [
     "question"
    ],
@@ -38,8 +40,8 @@
    "files": [],
    "packages": [],
    "file": "daily_question.module.json",
-   "bytes": 4856,
-   "sha256": "d02d34e05c526a208f994510e415d1d9ce0cf601b10d11c2f62e9b17087238bf"
+   "bytes": 4874,
+   "sha256": "8556ff22d29088c3bc1f1706b195bfa6ffb26eb91e668b6da624a71c6e5b76c5"
   },
   {
    "id": "faq_helper",
@@ -58,6 +60,8 @@
    ],
    "kind": "data",
    "provides": "",
+   "icon": "💡",
+   "images": [],
    "commands": [
     "invite",
     "support",
@@ -73,8 +77,8 @@
    "files": [],
    "packages": [],
    "file": "faq_helper.module.json",
-   "bytes": 2161,
-   "sha256": "98b8bdb7d1dea01098b057f9a9dca93c9d2f93935bf65aa3c949d9288621f89d"
+   "bytes": 2179,
+   "sha256": "709e1a0ccc957f07db697c3405e62aaeee26e7682b25c4a7f658214b83a7362a"
   },
   {
    "id": "server_rules",
@@ -92,6 +96,8 @@
    ],
    "kind": "data",
    "provides": "",
+   "icon": "📜",
+   "images": [],
    "commands": [
     "rules"
    ],
@@ -103,8 +109,8 @@
    "files": [],
    "packages": [],
    "file": "server_rules.module.json",
-   "bytes": 1534,
-   "sha256": "65b4eb1fcd1628b1009428ebdd7fb4d1b76c89adea81c6cd2f4c575a6e8381c7"
+   "bytes": 1552,
+   "sha256": "0e81d35a0ccbbf0254ece0bbbda14dab63f6da148ea5ac8ac85a00e16bac933f"
   },
   {
    "id": "magic_8ball",
@@ -122,6 +128,8 @@
    ],
    "kind": "data",
    "provides": "",
+   "icon": "🎱",
+   "images": [],
    "commands": [
     "8ball",
     "coin",
@@ -133,8 +141,8 @@
    "files": [],
    "packages": [],
    "file": "magic_8ball.module.json",
-   "bytes": 1649,
-   "sha256": "76cff1aaf7783c4aed7f484aa8b975abe451f2f9c82197fd6fa21f68b7a7b69f"
+   "bytes": 1667,
+   "sha256": "5fda15a92464e74ba80d3113d76abe0451bd5a821f85b3fc278ba5efa83b9cc1"
   },
   {
    "id": "good_vibes",
@@ -153,6 +161,8 @@
    ],
    "kind": "data",
    "provides": "",
+   "icon": "🌞",
+   "images": [],
    "commands": [
     "hug",
     "highfive"
@@ -163,8 +173,82 @@
    "files": [],
    "packages": [],
    "file": "good_vibes.module.json",
-   "bytes": 1492,
-   "sha256": "6ae0e282ba184281986db7f8a317c526ff3197b47d1236e1716f74d68360a734"
+   "bytes": 1510,
+   "sha256": "328cdfa10f48e6ea74a18d6f4b7fd33096c084f9debdea8a7d8bfbe2e51f6667"
+  },
+  {
+   "id": "vectoria",
+   "name": "Vectoria",
+   "summary": "A talking pixel-art expert on Vector bots and WebXDC: !vec answers in text, !vectoria in a lip-synced video.",
+   "description": "Vectoria knows the Vector SDKs (Python, Rust, JS) and WebXDC Mini Apps, and searches the web when her notes don't cover something. Ask with !vec for a text answer (code included), or !vectoria for a short video: her sprite lip-syncs to a retro SAM voice under a VHS filter, with C64-style subtitles. Reply to any of her answers to keep talking. She remembers each person (!vecmemory, !vecforget), and 👍/👎 votes are kept.\n\nNeeds: an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. For videos: ffmpeg, plus her voice, which an owner builds once with !vecvoice (git and a C compiler). Without those she still answers in text. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+   "group": "Fun",
+   "release": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "https://lucky-edgelord.github.io/aio-marketplace/",
+   "tags": [
+    "ai",
+    "assistant",
+    "video",
+    "webxdc",
+    "developers"
+   ],
+   "kind": "code",
+   "provides": "",
+   "icon": "media/vectoria/icon.png",
+   "images": [
+    {
+     "src": "media/vectoria/talking.webp",
+     "caption": "!vectoria answers in a lip-synced video with a retro voice"
+    },
+    {
+     "src": "media/vectoria/subtitles.jpg",
+     "caption": "VHS look and C64-style subtitles"
+    }
+   ],
+   "commands": [],
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [
+    "Ollama address",
+    "Model",
+    "API key variable",
+    "Search the web",
+    "Use her notes",
+    "Only in these channels",
+    "Answer in DMs",
+    "Summarise memory after",
+    "Exchanges kept word for word",
+    "Sentences per video",
+    "Video size (px)",
+    "VHS look",
+    "VHS strength",
+    "Subtitles",
+    "Largest video (KB)",
+    "Voice pitch",
+    "Voice speed",
+    "Voice mouth",
+    "Voice throat",
+    "SAM program"
+   ],
+   "files": [
+    "OFL.txt",
+    "__init__.py",
+    "assets.json",
+    "brain.py",
+    "cog.py",
+    "kb_vector_miniapps.md",
+    "kb_vector_platform.md",
+    "kb_vector_sdk_py.md",
+    "kb_vector_sdk_rust.md",
+    "kb_webxdc.md",
+    "persona.md",
+    "video.py"
+   ],
+   "packages": [],
+   "file": "vectoria.module.json",
+   "bytes": 425605,
+   "sha256": "24c278279d035e268414aa6373695cc0f9e4c18fddb2f7400b082b477f52b62f"
   },
   {
    "id": "ai_automod",
@@ -183,6 +267,8 @@
    ],
    "kind": "code",
    "provides": "automod",
+   "icon": "🛡️",
+   "images": [],
    "commands": [],
    "autoresponders": 0,
    "timers": 0,
@@ -201,8 +287,8 @@
    ],
    "packages": [],
    "file": "ai_automod.module.json",
-   "bytes": 8807,
-   "sha256": "cc91d1fbb023f1f441433e9c698fb1e5c12560382af3b683c3309aae4bf6cd13"
+   "bytes": 8828,
+   "sha256": "29d69d2df23be2a3d4801fde36aa666b5fde31617031d5bd08d0b72fd8dadad9"
   }
  ]
 }

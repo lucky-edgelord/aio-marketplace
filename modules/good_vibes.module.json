@@ -13,6 +13,7 @@
     "fun",
     "chat"
   ],
+  "icon": "🌞",
   "commands": [
     {
       "name": "hug",

@@ -8,6 +8,7 @@
 ## What makes a good module
 
 - One clear job, said in `summary` (one line) and `description` (a short paragraph). Fill in `author`, `license` and `tags`.
+- **Show it.** Give it an `icon` (an emoji, or a square picture) and, if you can, `images`: screenshots or a short animated preview of it working. Put pictures in `modules/media/<id>/` and refer to them as `media/<id>/name.png`. The first image is the card's cover, so make it 16:9.
 - Anything a community will want to change (texts, links, channel names, times) goes in `settings` and is used as `{settings.key}`. People edit settings on the dashboard.
 - Sensible cooldowns on commands and autoresponders, so a busy channel isn't flooded.
 - **Prefer data to code.** Modules with `code` are read line by line before they're merged, and must say in their description what they send where.

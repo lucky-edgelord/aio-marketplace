@@ -19,6 +19,7 @@ sys.path.insert(0, str(HERE))
 import module_format as fmt  # noqa: E402
 
 REPO = "lucky-edgelord/aio-marketplace"
+MAX_PICTURE = 800_000
 RESERVED = tuple(json.loads((HERE / "reserved.json").read_text()))
 
 
@@ -41,6 +42,13 @@ def main() -> int:
                 raw = path.read_bytes()
             else:
                 problems.append(f"{path.name}: not in the standard layout (run: python3 tools/make_catalog.py --fix)")
+        for pic in [m["icon"]] * fmt.media_path(m.get("icon")) + [i["src"] for i in m.get("images", [])]:
+            f = ROOT / "modules" / pic
+            if not f.is_file():
+                problems.append(f"{path.name}: {pic} is missing (put it in modules/{pic})")
+            elif f.stat().st_size > MAX_PICTURE:
+                problems.append(f"{path.name}: {pic} is {f.stat().st_size // 1000} KB; keep pictures under "
+                                f"{MAX_PICTURE // 1000} KB")
         s = fmt.summary(m)
         entries.append({**s, "file": path.name, "bytes": len(raw), "sha256": fmt.digest(raw)})
     for n in notes:

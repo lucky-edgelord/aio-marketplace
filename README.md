@@ -19,6 +19,7 @@ Modules for [Vectiq](https://github.com/lucky-edgelord/aio-vector-bot), the all-
 | `daily_question` | A conversation starter every day at your time, and `!question`. |
 | `magic_8ball` | `!8ball`, `!coin` and `!dice`. |
 | `good_vibes` | Reacts to good mornings, thanks and congratulations; `!hug` and `!highfive`. |
+| `vectoria` | Vectoria, a talking pixel-art expert on Vector bots and WebXDC: `!vec` answers in text, `!vectoria` in a lip-synced video. **Runs code.** |
 | `ai_automod` | An AI model checks messages against your rules (Ollama, OpenAI or any compatible API). **Runs code.** |
 
 Modules without code only do what Vectiq knows how to do with data: answer commands, reply or react to phrases, and post on a timer. Modules marked **runs code** carry Python that runs on the bot's computer; Vectiq only installs them when its owner turns on *Settings → Marketplace → Allow modules with code*.

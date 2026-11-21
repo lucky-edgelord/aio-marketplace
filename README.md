@@ -1,36 +1,38 @@
 # aio-marketplace
 
-Modules for [Vectiq](https://github.com/lucky-edgelord/aio-vector-bot), the all-in-one bot for [Vector](https://vectorapp.io) communities. Each module is **one JSON file**.
+Modules for [Vectiq](https://github.com/lucky-edgelord/aio-vector-bot), the all-in-one bot for [Vector](https://vectorapp.io) communities. A module is **one JSON file**: commands, autoresponders and timers that Vectiq runs for you, and sometimes a little Python.
 
-**Browse:** <https://lucky-edgelord.github.io/aio-marketplace/> · **Install:** Vectiq dashboard → **Marketplace** → Browse → Install
+**Website:** <https://lucky-edgelord.github.io/aio-marketplace/>
 
-| Module | What it does | Kind |
-|---|---|---|
-| `server_rules` | A `!rules` command, and a nudge when someone asks about the rules. | ready to use |
-| `faq_helper` | `!invite`, `!support`, `!links` and answers to the questions newcomers always ask. | ready to use |
-| `daily_question` | A conversation starter posted every day at a time you choose, and `!question`. | ready to use |
-| `magic_8ball` | `!8ball`, `!coin` and `!dice`. | ready to use |
-| `community_starter` | Switches on the modules most communities want on day one and sets calm defaults. | preset |
-| `ai_automod` | An AI model reads each message against your rules. Works with Ollama, OpenAI or any compatible API. | runs code |
+## Getting a module
 
-*Ready to use* modules are data: commands, auto-replies and scheduled posts that Vectiq knows how to run, with no code. *Presets* are settings you preview before applying. *Runs code* modules contain Python that runs on the bot's computer; Vectiq only installs them when its owner has turned on **Allow packs with code**.
+| Where | How |
+|---|---|
+| Dashboard | **Marketplace → Browse**, then **Get**. You see what a module does before it's added. |
+| Chat (owners) | `!module market` lists them, `!module get server_rules` adds one and switches it on. |
+| Terminal | Download the file, then `vectiq --import-module server_rules.module.json`. |
+
+| Module | What it does |
+|---|---|
+| `server_rules` | `!rules` shows your rules as a card, and the bot points people to it when they ask. |
+| `faq_helper` | `!invite`, `!support`, `!links`, with answers for the questions newcomers ask. |
+| `daily_question` | A conversation starter every day at your time, and `!question`. |
+| `magic_8ball` | `!8ball`, `!coin` and `!dice`. |
+| `good_vibes` | Reacts to good mornings, thanks and congratulations; `!hug` and `!highfive`. |
+| `ai_automod` | An AI model checks messages against your rules (Ollama, OpenAI or any compatible API). **Runs code.** |
+
+Modules without code only do what Vectiq knows how to do with data: answer commands, reply or react to phrases, and post on a timer. Modules marked **runs code** carry Python that runs on the bot's computer; Vectiq only installs them when its owner turns on *Settings → Marketplace → Allow modules with code*.
 
 ## How it works
 
-- `modules/*.vqmodule.json` are the packs. The format is described in [SPEC.md](SPEC.md) and in the [Vectiq docs](https://lucky-edgelord.github.io/aio-vector-bot/module-packs.html).
-- `catalog.json` lists every pack with its SHA-256. Vectiq checks each file against it before reading it, and only talks to `raw.githubusercontent.com`. Don't edit it by hand: `python3 tools/build_catalog.py` writes it.
+Like the course library of [Lilith Learning Lab](https://github.com/lucky-edgelord/Lilith-Learning-Lab):
+
+- `modules/*.module.json` are the modules. The format is in [FORMAT.md](FORMAT.md).
+- `modules/catalog.json` lists them, with each file's SHA-256. Vectiq reads only from `raw.githubusercontent.com` and refuses a file that doesn't match its checksum. `python3 tools/make_catalog.py` writes the catalog; don't edit it by hand.
 - `docs/` is the website (GitHub Pages: branch `main`, folder `/docs`).
 
-## Without the dashboard
+Any repository with the same layout is a marketplace: point *Settings → Marketplace* at it.
 
-```
-curl -LO https://raw.githubusercontent.com/lucky-edgelord/aio-marketplace/main/modules/server_rules.vqmodule.json
-vectiq --pack-check server_rules.vqmodule.json
-vectiq --pack-install server_rules.vqmodule.json
-```
+## Making one
 
-then `!module scan` and `!module on server_rules` in chat.
-
-## Adding yours
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Licence: MIT.
+See [CONTRIBUTING.md](CONTRIBUTING.md): start from [`template.module.json`](template.module.json), or ask an AI to write one. Licence: MIT.

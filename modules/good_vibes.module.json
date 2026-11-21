@@ -1,0 +1,85 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "good_vibes",
+  "name": "Good vibes",
+  "summary": "Reacts to good mornings, thanks and congratulations, and adds !hug and !highfive.",
+  "group": "Fun",
+  "release": "1.0.0",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "tags": [
+    "reactions",
+    "fun",
+    "chat"
+  ],
+  "commands": [
+    {
+      "name": "hug",
+      "help": "Send someone a hug: !hug name",
+      "replies": [
+        "🤗 {user} hugs {args}!",
+        "🫂 {user} gives {args} a big hug."
+      ],
+      "cooldown": 5
+    },
+    {
+      "name": "highfive",
+      "help": "High-five someone: !highfive name",
+      "replies": [
+        "🙌 {user} high-fives {args}!"
+      ],
+      "aliases": [
+        "hi5"
+      ],
+      "cooldown": 5
+    }
+  ],
+  "autoresponders": [
+    {
+      "match": "word",
+      "phrases": [
+        "good morning",
+        "gm"
+      ],
+      "react": [
+        "☀️"
+      ],
+      "cooldown": 20
+    },
+    {
+      "match": "word",
+      "phrases": [
+        "thank you",
+        "thanks",
+        "ty"
+      ],
+      "react": [
+        "💚"
+      ],
+      "cooldown": 10
+    },
+    {
+      "match": "word",
+      "phrases": [
+        "congrats",
+        "congratulations"
+      ],
+      "react": [
+        "🎉"
+      ],
+      "cooldown": 10
+    },
+    {
+      "match": "word",
+      "phrases": [
+        "good night",
+        "gn"
+      ],
+      "react": [
+        "🌙"
+      ],
+      "cooldown": 20
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "server_rules",
+  "name": "Server rules",
+  "summary": "A !rules command that shows your rules as a card, and a pointer when someone asks about them.",
+  "group": "Community",
+  "release": "1.0.0",
+  "description": "Write your rules once in Settings → Server rules. !rules shows them as a card; when someone says \"rules\" in chat, the bot points them to the command (at most every two minutes per channel).",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "tags": [
+    "rules",
+    "starter"
+  ],
+  "settings": [
+    {
+      "key": "rules",
+      "label": "The rules",
+      "type": "longtext",
+      "help": "Shown by !rules. Line breaks are kept.",
+      "default": "1. Be kind. No harassment, hate or personal attacks.\n2. No spam, scams or ads nobody asked for.\n3. Keep it safe for work unless a channel says otherwise.\n4. Don't share anyone's private information.\n5. Moderators have the final say. Ask if something is unclear."
+    }
+  ],
+  "commands": [
+    {
+      "name": "rules",
+      "help": "Show the community rules",
+      "replies": [
+        "{settings.rules}"
+      ],
+      "card": {
+        "title": "Rules of {community}",
+        "color": "#59fcb3"
+      },
+      "aliases": [
+        "rule"
+      ],
+      "cooldown": 10
+    }
+  ],
+  "autoresponders": [
+    {
+      "match": "word",
+      "phrases": [
+        "rules"
+      ],
+      "replies": [
+        "The rules are one command away: {prefix}rules"
+      ],
+      "cooldown": 120
+    }
+  ]
+}

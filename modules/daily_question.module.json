@@ -1,0 +1,130 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "daily_question",
+  "name": "Daily question",
+  "summary": "Posts a conversation starter every day at a time you choose, and adds !question.",
+  "group": "Community",
+  "release": "1.0.0",
+  "description": "Thirty friendly questions. One is posted each day at the time and in the channel you set (in every community the bot serves that has that channel), and anyone can ask for another with !question. Set the channel, time and time zone under Settings → Daily question.",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "tags": [
+    "engagement",
+    "chat",
+    "timer"
+  ],
+  "settings": [
+    {
+      "key": "channel",
+      "label": "Channel",
+      "type": "channel",
+      "help": "Where the daily question is posted",
+      "default": "general"
+    },
+    {
+      "key": "time",
+      "label": "Time of day",
+      "type": "text",
+      "help": "24-hour clock, like 18:00",
+      "default": "18:00"
+    },
+    {
+      "key": "timezone",
+      "label": "Time zone",
+      "type": "text",
+      "help": "Like Europe/London or America/New_York",
+      "default": "UTC"
+    }
+  ],
+  "commands": [
+    {
+      "name": "question",
+      "help": "Get a conversation starter",
+      "replies": [
+        "What made you smile this week?",
+        "If you could learn any skill overnight, what would it be?",
+        "What's the best thing you've eaten lately?",
+        "Which book, show or game would you recommend to everyone here?",
+        "What's one app you couldn't do without?",
+        "What would your perfect day off look like?",
+        "Where would you go if you could travel anywhere tomorrow?",
+        "What's something you taught yourself?",
+        "Which song is stuck in your head right now?",
+        "What's a hobby you'd like to pick up?",
+        "What's the best advice you've ever been given?",
+        "What was your first computer or console?",
+        "What's something you've changed your mind about?",
+        "What would you do with one extra hour a day?",
+        "Which fictional world would you move to?",
+        "What's your go-to comfort food?",
+        "What's a small project you're proud of?",
+        "Which sound do you find most relaxing?",
+        "Coffee, tea, or something else?",
+        "What's the most useful thing you own?",
+        "What's a tradition you love?",
+        "Which instrument would you master if you could?",
+        "What's the best trip you've taken?",
+        "What did you want to be when you grew up?",
+        "Which season suits you best, and why?",
+        "What small win can you share today?",
+        "What are you looking forward to this month?",
+        "What's the strangest true fact you know?",
+        "Who's someone that inspires you?",
+        "What's a skill everyone should learn?"
+      ],
+      "card": {
+        "title": "Question",
+        "color": "#59fcb3"
+      },
+      "aliases": [
+        "qotd"
+      ],
+      "cooldown": 30
+    }
+  ],
+  "timers": [
+    {
+      "channel": "{settings.channel}",
+      "replies": [
+        "What made you smile this week?",
+        "If you could learn any skill overnight, what would it be?",
+        "What's the best thing you've eaten lately?",
+        "Which book, show or game would you recommend to everyone here?",
+        "What's one app you couldn't do without?",
+        "What would your perfect day off look like?",
+        "Where would you go if you could travel anywhere tomorrow?",
+        "What's something you taught yourself?",
+        "Which song is stuck in your head right now?",
+        "What's a hobby you'd like to pick up?",
+        "What's the best advice you've ever been given?",
+        "What was your first computer or console?",
+        "What's something you've changed your mind about?",
+        "What would you do with one extra hour a day?",
+        "Which fictional world would you move to?",
+        "What's your go-to comfort food?",
+        "What's a small project you're proud of?",
+        "Which sound do you find most relaxing?",
+        "Coffee, tea, or something else?",
+        "What's the most useful thing you own?",
+        "What's a tradition you love?",
+        "Which instrument would you master if you could?",
+        "What's the best trip you've taken?",
+        "What did you want to be when you grew up?",
+        "Which season suits you best, and why?",
+        "What small win can you share today?",
+        "What are you looking forward to this month?",
+        "What's the strangest true fact you know?",
+        "Who's someone that inspires you?",
+        "What's a skill everyone should learn?"
+      ],
+      "card": {
+        "title": "Question of the day",
+        "color": "#59fcb3"
+      },
+      "at": "{settings.time}",
+      "timezone": "{settings.timezone}",
+      "order": "random"
+    }
+  ]
+}

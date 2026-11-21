@@ -1,183 +1,208 @@
 {
- "format": "vectiq-marketplace",
+ "format": "vectiq-catalog",
  "version": 1,
  "repo": "lucky-edgelord/aio-marketplace",
+ "groups": [
+  "Community",
+  "Fun",
+  "Safety"
+ ],
  "modules": [
   {
-   "id": "ai_automod",
-   "file": "modules/ai_automod.vqmodule.json",
-   "label": "AI automod",
-   "help": "An AI model reads each message against your rules and removes what breaks them. Works with Ollama, OpenAI, OpenRouter or any OpenAI-compatible API.",
-   "description": "Runs a model of your choice over each message and applies your rules in plain words. It replaces the automod module (only one runs at a time). This pack carries Python code, so it only installs when 'Allow packs with code' is on. Messages are sent to the API address you configure: use a local model if that matters.",
-   "version": "1.0.0",
-   "author": "lucky-edgelord",
-   "license": "MIT",
-   "homepage": "",
-   "group": "Safety",
-   "tags": [
-    "automod",
-    "ai",
-    "moderation",
-    "code"
-   ],
-   "kind": "code",
-   "commands": [],
-   "triggers": 0,
-   "schedules": 0,
-   "settings": 7,
-   "preset": 0,
-   "files": [
-    "__init__.py",
-    "cog.py"
-   ],
-   "provides": "automod",
-   "bytes": 9008,
-   "sha256": "741fe9dae34b91937316df6e74a41b27f7cbc144d6fd970f12cd25477381ee60"
-  },
-  {
-   "id": "community_starter",
-   "file": "modules/community_starter.vqmodule.json",
-   "label": "Community starter",
-   "help": "A sensible first setup: welcome messages, verification, leveling, tickets, role menus, events and giveaways.",
-   "description": "Switches on the modules most communities want on day one and sets calm defaults: warnings time people out, level-ups are announced, members can have two tickets open. Preview the changes before applying; a restore point is saved first, so you can undo it.",
-   "version": "1.0.0",
-   "author": "lucky-edgelord",
-   "license": "MIT",
-   "homepage": "",
-   "group": "Community",
-   "tags": [
-    "preset",
-    "starter",
-    "new community"
-   ],
-   "kind": "preset",
-   "commands": [],
-   "triggers": 0,
-   "schedules": 0,
-   "settings": 0,
-   "preset": 19,
-   "files": [],
-   "provides": "",
-   "bytes": 1404,
-   "sha256": "6505d4d8e448f741d923b0f85cec99bfc12eb70bd1b37c3714dfda3bb420a63f"
-  },
-  {
    "id": "daily_question",
-   "file": "modules/daily_question.vqmodule.json",
-   "label": "Daily question",
-   "help": "Posts a conversation starter in a channel every day at a time you choose, and adds a !question command.",
-   "description": "Thirty friendly conversation starters. One is posted each day at the time you set, in the channel you set (in every community the bot serves that has it), and anyone can ask for another with !question. Set the channel, time and time zone under Settings → Daily question.",
-   "version": "1.0.0",
+   "name": "Daily question",
+   "summary": "Posts a conversation starter every day at a time you choose, and adds !question.",
+   "description": "Thirty friendly questions. One is posted each day at the time and in the channel you set (in every community the bot serves that has that channel), and anyone can ask for another with !question. Set the channel, time and time zone under Settings → Daily question.",
+   "group": "Community",
+   "release": "1.0.0",
    "author": "lucky-edgelord",
    "license": "MIT",
    "homepage": "",
-   "group": "Community",
    "tags": [
     "engagement",
     "chat",
-    "schedule"
+    "timer"
    ],
-   "kind": "module",
+   "kind": "data",
+   "provides": "",
    "commands": [
     "question"
    ],
-   "triggers": 0,
-   "schedules": 1,
-   "settings": 3,
-   "preset": 0,
+   "autoresponders": 0,
+   "timers": 1,
+   "settings": [
+    "Channel",
+    "Time of day",
+    "Time zone"
+   ],
    "files": [],
-   "provides": "",
-   "bytes": 5117,
-   "sha256": "c0c68ebd68a6a073f8eb114085a788be0b8cee08e79b642bdcf778bed4832612"
+   "packages": [],
+   "file": "daily_question.module.json",
+   "bytes": 4856,
+   "sha256": "d02d34e05c526a208f994510e415d1d9ce0cf601b10d11c2f62e9b17087238bf"
   },
   {
    "id": "faq_helper",
-   "file": "modules/faq_helper.vqmodule.json",
-   "label": "FAQ helper",
-   "help": "Commands for your invite link, support and help, plus answers to the questions newcomers always ask.",
-   "description": "Three commands (invite, support, links) that read their text from settings, and two auto-replies for \"how do I join\" and \"where do I get help\". Fill in your own links under Settings → FAQ helper.",
-   "version": "1.0.0",
+   "name": "FAQ helper",
+   "summary": "!invite, !support and !links, plus answers to the questions newcomers always ask.",
+   "description": "Three commands whose text you set under Settings → FAQ helper, and two autoresponders that point people to them when they ask how to invite someone or where to get help.",
+   "group": "Community",
+   "release": "1.0.0",
    "author": "lucky-edgelord",
    "license": "MIT",
    "homepage": "",
-   "group": "Community",
    "tags": [
     "faq",
     "support",
     "starter"
    ],
-   "kind": "module",
+   "kind": "data",
+   "provides": "",
    "commands": [
     "invite",
     "support",
     "links"
    ],
-   "triggers": 2,
-   "schedules": 0,
-   "settings": 3,
-   "preset": 0,
+   "autoresponders": 2,
+   "timers": 0,
+   "settings": [
+    "How to invite people",
+    "Where to get help",
+    "Useful links"
+   ],
    "files": [],
-   "provides": "",
-   "bytes": 2176,
-   "sha256": "28fe2edc575f6ad0ea841b09560be78741cc6c211cf589ad36e20f033a42d131"
+   "packages": [],
+   "file": "faq_helper.module.json",
+   "bytes": 2161,
+   "sha256": "98b8bdb7d1dea01098b057f9a9dca93c9d2f93935bf65aa3c949d9288621f89d"
   },
   {
-   "id": "magic_8ball",
-   "file": "modules/magic_8ball.vqmodule.json",
-   "label": "Magic 8-ball & dice",
-   "help": "!8ball answers yes-or-no questions, !coin flips a coin and !dice rolls a die.",
-   "description": "",
-   "version": "1.0.0",
+   "id": "server_rules",
+   "name": "Server rules",
+   "summary": "A !rules command that shows your rules as a card, and a pointer when someone asks about them.",
+   "description": "Write your rules once in Settings → Server rules. !rules shows them as a card; when someone says \"rules\" in chat, the bot points them to the command (at most every two minutes per channel).",
+   "group": "Community",
+   "release": "1.0.0",
    "author": "lucky-edgelord",
    "license": "MIT",
    "homepage": "",
+   "tags": [
+    "rules",
+    "starter"
+   ],
+   "kind": "data",
+   "provides": "",
+   "commands": [
+    "rules"
+   ],
+   "autoresponders": 1,
+   "timers": 0,
+   "settings": [
+    "The rules"
+   ],
+   "files": [],
+   "packages": [],
+   "file": "server_rules.module.json",
+   "bytes": 1534,
+   "sha256": "65b4eb1fcd1628b1009428ebdd7fb4d1b76c89adea81c6cd2f4c575a6e8381c7"
+  },
+  {
+   "id": "magic_8ball",
+   "name": "8-ball, coins and dice",
+   "summary": "!8ball answers yes-or-no questions, !coin flips a coin and !dice rolls a die.",
+   "description": "",
    "group": "Fun",
+   "release": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
    "tags": [
     "fun",
     "games"
    ],
-   "kind": "module",
+   "kind": "data",
+   "provides": "",
    "commands": [
     "8ball",
     "coin",
     "dice"
    ],
-   "triggers": 0,
-   "schedules": 0,
-   "settings": 0,
-   "preset": 0,
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [],
    "files": [],
-   "provides": "",
-   "bytes": 1677,
-   "sha256": "665a6a3b28de011400d2185fc9e8ad5b07f5b2c1f3d1e442f0c79a030a2a2319"
+   "packages": [],
+   "file": "magic_8ball.module.json",
+   "bytes": 1649,
+   "sha256": "76cff1aaf7783c4aed7f484aa8b975abe451f2f9c82197fd6fa21f68b7a7b69f"
   },
   {
-   "id": "server_rules",
-   "file": "modules/server_rules.vqmodule.json",
-   "label": "Server rules",
-   "help": "A !rules command, and a nudge when someone asks about the rules. Edit the rules from the dashboard.",
-   "description": "Gives your community a !rules command that shows the rules as a card, and replies with a pointer when someone says \"rules\" in chat. Change the text under Settings → Server rules; no restart needed.",
-   "version": "1.0.0",
+   "id": "good_vibes",
+   "name": "Good vibes",
+   "summary": "Reacts to good mornings, thanks and congratulations, and adds !hug and !highfive.",
+   "description": "",
+   "group": "Fun",
+   "release": "1.0.0",
    "author": "lucky-edgelord",
    "license": "MIT",
    "homepage": "",
-   "group": "Community",
    "tags": [
-    "rules",
-    "starter"
+    "reactions",
+    "fun",
+    "chat"
    ],
-   "kind": "module",
-   "commands": [
-    "rules"
-   ],
-   "triggers": 1,
-   "schedules": 0,
-   "settings": 1,
-   "preset": 0,
-   "files": [],
+   "kind": "data",
    "provides": "",
-   "bytes": 1556,
-   "sha256": "501469ac9534c10c5202c26f8efa2cabca15b3420ae75d8085673bcdffcc0177"
+   "commands": [
+    "hug",
+    "highfive"
+   ],
+   "autoresponders": 4,
+   "timers": 0,
+   "settings": [],
+   "files": [],
+   "packages": [],
+   "file": "good_vibes.module.json",
+   "bytes": 1492,
+   "sha256": "6ae0e282ba184281986db7f8a317c526ff3197b47d1236e1716f74d68360a734"
+  },
+  {
+   "id": "ai_automod",
+   "name": "AI automod",
+   "summary": "An AI model reads each message against your rules and removes what breaks them.",
+   "description": "Uses any OpenAI-compatible API: a local Ollama or LM Studio, OpenAI, OpenRouter. Write your rules in plain words under Settings → AI automod. It does automod's job, so it switches Sentire off while it's on. Messages are sent to the address you set: use a local model if that matters to you. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+   "group": "Safety",
+   "release": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "tags": [
+    "automod",
+    "ai",
+    "moderation"
+   ],
+   "kind": "code",
+   "provides": "automod",
+   "commands": [],
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [
+    "API address",
+    "Model",
+    "API key variable",
+    "Your rules",
+    "What to do",
+    "Shortest message to check",
+    "Most checks per minute"
+   ],
+   "files": [
+    "__init__.py",
+    "cog.py"
+   ],
+   "packages": [],
+   "file": "ai_automod.module.json",
+   "bytes": 8807,
+   "sha256": "cc91d1fbb023f1f441433e9c698fb1e5c12560382af3b683c3309aae4bf6cd13"
   }
  ]
 }

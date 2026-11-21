@@ -1,0 +1,105 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "hello_world",
+  "name": "Hello world",
+  "summary": "Greets people and answers a question.",
+  "group": "Fun",
+  "release": "1.0.0",
+  "author": "you",
+  "license": "MIT",
+  "tags": [
+    "example"
+  ],
+  "settings": [
+    {
+      "key": "greeting",
+      "label": "Greeting",
+      "type": "text",
+      "help": "What the hello command says",
+      "default": "Hello, {user}!"
+    },
+    {
+      "key": "channel",
+      "label": "Daily post channel",
+      "type": "channel",
+      "default": "general"
+    },
+    {
+      "key": "time",
+      "label": "Daily post time",
+      "type": "text",
+      "help": "24-hour, like 09:00",
+      "default": "09:00"
+    }
+  ],
+  "commands": [
+    {
+      "name": "hello",
+      "help": "Say hello",
+      "replies": [
+        "{settings.greeting}"
+      ],
+      "aliases": [
+        "hi"
+      ],
+      "cooldown": 5
+    },
+    {
+      "name": "flip",
+      "help": "Flip a coin",
+      "replies": [
+        "Heads",
+        "Tails"
+      ],
+      "cooldown": 3
+    },
+    {
+      "name": "about",
+      "help": "About this community",
+      "replies": [
+        "{community} has {members} members. Ask away, {mention}."
+      ],
+      "card": {
+        "title": "{community}",
+        "color": "#59fcb3"
+      },
+      "cooldown": 3
+    }
+  ],
+  "autoresponders": [
+    {
+      "match": "word",
+      "phrases": [
+        "good morning",
+        "gm"
+      ],
+      "react": [
+        "☀️"
+      ],
+      "cooldown": 30
+    },
+    {
+      "match": "contains",
+      "phrases": [
+        "how do i join"
+      ],
+      "replies": [
+        "Ask a moderator, {user}!"
+      ],
+      "cooldown": 120
+    }
+  ],
+  "timers": [
+    {
+      "channel": "{settings.channel}",
+      "replies": [
+        "Good morning, {community}!",
+        "A new day: what are you working on?"
+      ],
+      "at": "{settings.time}",
+      "timezone": "UTC",
+      "order": "random"
+    }
+  ]
+}

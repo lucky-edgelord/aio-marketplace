@@ -3,103 +3,106 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vectiq Marketplace</title>
-<meta name="description" content="Modules for Vectiq, the all-in-one Vector community bot: commands, auto-replies, scheduled posts and presets, each one a single JSON file.">
+<title>Vectiq Marketplace: modules for Vector communities</title>
+<meta name="description" content="Modules for Vectiq, the all-in-one bot for Vector communities. Each module is one JSON file you can add from the dashboard.">
 <style>
-:root { --bg:#0b0b0c; --panel:#111113; --card:#151517; --raise:#1c1c1f; --line:#26262a; --text:#f2f2f3; --dim:#9a9ca3; --accent:#59fcb3; --accent-ink:#04130c; --warn:#ffc65c; --danger:#ff6b7a; }
+:root { --bg:#0b0b0c; --card:#151517; --raise:#1c1c1f; --line:#26262a; --text:#f2f2f3; --dim:#9a9ca3; --accent:#59fcb3; --ink:#04130c; --warn:#ffc65c; --danger:#ff6b7a; }
 * { box-sizing: border-box; }
 html { color-scheme: dark; }
-body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
-a { color:var(--accent); }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
-header.top { padding: 56px 0 28px; border-bottom: 1px solid var(--line); }
-h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 12px; font-weight: 700; }
-h1 .dot { color: var(--accent); }
-.lead { max-width: 60ch; color: var(--dim); margin: 0 0 20px; font-size: 18px; }
-.how { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
-code { background: var(--raise); padding: 2px 7px; border-radius: 6px; font-size: .88em; }
-.bar { display:flex; gap:10px; flex-wrap:wrap; margin: 24px 0 18px; }
-input[type=search], select { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius: 12px; padding: 11px 14px; font: inherit; min-width: 0; }
-input[type=search] { flex: 1 1 260px; }
-input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); padding-bottom: 40px; }
-article { background:var(--card); border:1px solid var(--line); border-radius: 18px; padding: 18px; display:flex; flex-direction:column; gap:8px; }
-article h2 { font-size: 18px; margin: 0; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+header { padding: 52px 0 26px; border-bottom: 1px solid var(--line); }
+.brace { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--accent); font-size: 15px; margin-bottom: 10px; }
+h1 { font-size: clamp(30px, 6vw, 50px); line-height: 1.05; margin: 0 0 12px; letter-spacing: -.02em; }
+.lead { color: var(--dim); max-width: 62ch; margin: 0 0 18px; font-size: 18px; }
+.steps { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--dim); font-size: 15px; }
+.steps b { color: var(--text); font-weight: 600; }
+code { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--raise); padding: 1px 7px; border-radius: 6px; font-size: .88em; }
+.bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 26px 0 16px; }
+input[type=search] { flex: 1 1 260px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; font: inherit; }
+.chip { border: 1px solid var(--line); background: transparent; color: var(--dim); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer; }
+.chip[aria-pressed=true] { color: var(--accent); border-color: #22a070; background: #12281f; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h2.group { font-size: 15px; color: var(--dim); font-weight: 600; margin: 26px 2px 10px; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+article { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+article h3 { margin: 0; font-size: 18px; }
 article p { margin: 0; color: var(--dim); font-size: 15px; }
 .meta { color: var(--dim); font-size: 13px; }
-.row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-.pill { border:1px solid var(--line); border-radius: 999px; padding: 1px 10px; font-size: 12.5px; color: var(--dim); }
-.pill.module { color: var(--accent); border-color: #22a070; }
-.pill.preset { color: #7cb7ff; border-color: #2b4a73; }
+.row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.grow { flex: 1; }
+.pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 10px; font-size: 12.5px; color: var(--dim); }
+.pill.data { color: var(--accent); border-color: #22a070; }
 .pill.code { color: var(--danger); border-color: #6b2630; }
-.spacer { flex: 1; }
-.btn { display:inline-block; background:var(--accent); color:var(--accent-ink); border:0; border-radius: 999px; padding: 7px 16px; font: inherit; font-weight: 600; font-size: 14px; cursor:pointer; text-decoration:none; }
+.btn { background: var(--accent); color: var(--ink); border: 0; border-radius: 999px; padding: 7px 16px; font: inherit; font-weight: 600; font-size: 14px; text-decoration: none; cursor: pointer; }
 .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
-.empty { color: var(--dim); padding: 40px 0; grid-column: 1/-1; text-align:center; }
 details { color: var(--dim); font-size: 14px; }
 details summary { cursor: pointer; }
 details ul { margin: 6px 0 0; padding-left: 18px; }
-footer { border-top: 1px solid var(--line); padding: 24px 0 48px; color: var(--dim); font-size: 14px; }
 .warn { color: var(--warn); font-size: 13px; }
+.empty { color: var(--dim); text-align: center; padding: 40px 0; }
+footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 24px 0 48px; color: var(--dim); font-size: 14px; }
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap">
-  <h1>Vectiq Marketplace<span class="dot">.</span></h1>
-  <p class="lead">Modules for <a href="https://github.com/lucky-edgelord/aio-vector-bot">Vectiq</a>, the all-in-one bot for Vector communities. Each one is a single JSON file: add it from the dashboard, or download it and keep it.</p>
-  <div class="how"><span>In the dashboard:</span> <code>Marketplace → Browse → Install</code> <span>· or from a terminal:</span> <code>vectiq --pack-install file.vqmodule.json</code></div>
+<header><div class="wrap">
+  <div class="brace">{ "format": "vectiq-module" }</div>
+  <h1>Vectiq Marketplace</h1>
+  <p class="lead">Modules for <a href="https://github.com/lucky-edgelord/aio-vector-bot">Vectiq</a>, the all-in-one bot for Vector communities. Every module is one JSON file: commands, autoresponders and timers, and sometimes a little Python.</p>
+  <div class="steps"><span><b>Dashboard:</b> Marketplace → Browse → Get</span><span><b>Chat:</b> <code>!module get &lt;id&gt;</code></span><span><b>Terminal:</b> <code>vectiq --import-module file.module.json</code></span></div>
 </div></header>
 <main class="wrap">
-  <div class="bar">
-    <input id="q" type="search" placeholder="Search modules" aria-label="Search modules">
-    <select id="kind" aria-label="Kind"><option value="">Everything</option><option value="module">Ready to use</option><option value="preset">Presets</option><option value="code">With code</option></select>
-  </div>
-  <div id="grid" class="grid" aria-live="polite"><p class="empty">Loading…</p></div>
+  <div class="bar"><input id="q" type="search" placeholder="Search modules" aria-label="Search modules"><div id="chips" class="row" role="group" aria-label="Group"></div></div>
+  <div id="list" aria-live="polite"><p class="empty">Loading…</p></div>
 </main>
 <footer><div class="wrap">
-  Want to add yours? See <a href="https://github.com/lucky-edgelord/aio-marketplace/blob/main/CONTRIBUTING.md">CONTRIBUTING</a>. Vectiq checks each file against the checksum in <a href="catalog.json">catalog.json</a> before it installs it. Packs marked “runs code” contain Python that runs on the bot's computer: read them first.
+  Make your own: start from the template or ask an AI with the prompt in <a href="https://github.com/lucky-edgelord/aio-marketplace/blob/main/CONTRIBUTING.md">CONTRIBUTING</a>, then open a pull request. Vectiq checks each file against the checksum in <a href="catalog.json">catalog.json</a> before it uses it. Modules marked “runs code” contain Python that runs on the bot's computer; Vectiq only installs them when its owner allows it.
 </div></footer>
 <script>
-const RAW = "https://raw.githubusercontent.com/lucky-edgelord/aio-marketplace/main/";
-const KIND = { module: "Ready to use", preset: "Preset", code: "Runs code" };
-const grid = document.getElementById("grid"), q = document.getElementById("q"), kind = document.getElementById("kind");
-let all = [];
-function el(tag, props, ...kids) {
+"use strict";
+const RAW = "https://raw.githubusercontent.com/lucky-edgelord/aio-marketplace/main/modules/";
+const list = document.getElementById("list"), q = document.getElementById("q"), chips = document.getElementById("chips");
+let all = [], groups = [], group = "";
+function el(tag, attrs, ...kids) {
   const n = document.createElement(tag);
-  for (const [k, v] of Object.entries(props || {})) { if (k === "class") n.className = v; else if (v != null) n.setAttribute(k, v); }
-  for (const k of kids.flat()) if (k != null) n.append(k);
+  for (const [k, v] of Object.entries(attrs || {})) if (v != null && v !== false) n.setAttribute(k, v === true ? "" : v);
+  for (const k of kids.flat()) if (k != null && k !== false) n.append(k);
   return n;
 }
-function facts(m) {
-  const bits = [];
-  if (m.commands.length) bits.push(`${m.commands.length} command${m.commands.length === 1 ? "" : "s"}`);
-  if (m.triggers) bits.push(`${m.triggers} auto-repl${m.triggers === 1 ? "y" : "ies"}`);
-  if (m.schedules) bits.push(`${m.schedules} scheduled post${m.schedules === 1 ? "" : "s"}`);
-  if (m.preset) bits.push(`${m.preset} setting${m.preset === 1 ? "" : "s"} changed`);
-  if (m.files.length) bits.push(`${m.files.length} Python file${m.files.length === 1 ? "" : "s"}`);
-  return bits.join(" · ");
-}
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+const kb = (n) => `${Math.max(1, Math.round(n / 1024))} KB`;
 function card(m) {
+  const counts = [m.commands.length && plural(m.commands.length, "command"), m.autoresponders && plural(m.autoresponders, "autoresponder"),
+    m.timers && plural(m.timers, "timer"), m.files.length && plural(m.files.length, "Python file")].filter(Boolean).join(" · ");
   return el("article", null,
-    el("div", { class: "row" }, el("h2", null, m.label), el("span", { class: "spacer" }), el("span", { class: `pill ${m.kind}` }, KIND[m.kind] || m.kind)),
-    el("p", null, m.help),
-    el("div", { class: "meta" }, [`v${m.version}`, m.author && `by ${m.author}`, m.license, facts(m)].filter(Boolean).join(" · ")),
-    m.commands.length ? el("div", { class: "row" }, m.commands.map((c) => el("code", null, c))) : null,
-    m.kind === "code" ? el("div", { class: "warn" }, "Runs Python on the bot's computer. Needs “Allow packs with code”.") : null,
+    el("div", { class: "row" }, el("h3", { class: "grow" }, m.name), el("span", { class: `pill ${m.kind}` }, m.kind === "code" ? "runs code" : "no code")),
+    el("p", null, m.summary),
+    el("div", { class: "meta" }, [`v${m.release}`, m.author && `by ${m.author}`, counts, kb(m.bytes)].filter(Boolean).join(" · ")),
+    m.commands.length ? el("div", { class: "row" }, m.commands.map((c) => el("code", null, `!${c}`))) : null,
+    m.kind === "code" ? el("div", { class: "warn" }, "Runs Python on the bot's computer: needs “Allow modules with code”.") : null,
+    (m.description || m.settings.length) ? el("details", null, el("summary", null, "More"),
+      m.description ? el("p", null, m.description) : null,
+      m.settings.length ? el("p", null, `Settings: ${m.settings.join(", ")}.`) : null,
+      m.files.length ? el("p", null, `Files: ${m.files.join(", ")}.`) : null) : null,
     m.tags.length ? el("div", { class: "row" }, m.tags.map((t) => el("span", { class: "pill" }, t))) : null,
-    m.description ? el("details", null, el("summary", null, "More"), el("p", null, m.description)) : null,
-    el("div", { class: "row" }, el("span", { class: "spacer" }),
-      el("a", { class: "btn ghost", href: `${RAW}${m.file}`, download: `${m.id}.vqmodule.json` }, "Download JSON")));
+    el("div", { class: "row", style: "margin-top:auto" }, el("code", null, `!module get ${m.id}`), el("span", { class: "grow" }),
+      el("a", { class: "btn ghost", href: RAW + m.file, download: m.file }, "Download")));
 }
 function draw() {
+  chips.replaceChildren(...["", ...groups].map((g) => { const b = el("button", { class: "chip", type: "button", "aria-pressed": String(g === group) }, g || "All"); b.onclick = () => { group = g; draw(); }; return b; }));
   const needle = q.value.trim().toLowerCase();
-  const shown = all.filter((m) => (!kind.value || m.kind === kind.value) && (!needle || [m.label, m.help, m.author, m.id, ...m.tags].join(" ").toLowerCase().includes(needle)));
-  grid.replaceChildren(...(shown.length ? shown.map(card) : [el("p", { class: "empty" }, "No modules match.")]));
+  const shown = all.filter((m) => (!group || m.group === group) && (!needle || [m.name, m.summary, m.description, m.author, m.id, ...m.tags, ...m.commands].join(" ").toLowerCase().includes(needle)));
+  if (!shown.length) { list.replaceChildren(el("p", { class: "empty" }, "No module matches.")); return; }
+  const out = [];
+  for (const g of groups.filter((x) => shown.some((m) => m.group === x))) {
+    out.push(el("h2", { class: "group" }, g), el("div", { class: "grid" }, shown.filter((m) => m.group === g).map(card)));
+  }
+  list.replaceChildren(...out);
 }
-fetch("catalog.json").then((r) => r.json()).then((c) => { all = c.modules; draw(); })
-  .catch(() => grid.replaceChildren(el("p", { class: "empty" }, "Couldn't load the catalog. Try again in a minute.")));
-q.addEventListener("input", draw); kind.addEventListener("change", draw);
+fetch("catalog.json").then((r) => r.json()).then((c) => { all = c.modules; groups = c.groups; q.placeholder = `Search ${all.length} modules`; draw(); })
+  .catch(() => list.replaceChildren(el("p", { class: "empty" }, "Couldn't load the catalog. Try again in a minute.")));
+q.addEventListener("input", draw);
 </script>
 </body>
 </html>

@@ -1,0 +1,95 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "faq_helper",
+  "name": "FAQ helper",
+  "summary": "!invite, !support and !links, plus answers to the questions newcomers always ask.",
+  "group": "Community",
+  "release": "1.0.0",
+  "description": "Three commands whose text you set under Settings → FAQ helper, and two autoresponders that point people to them when they ask how to invite someone or where to get help.",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "tags": [
+    "faq",
+    "support",
+    "starter"
+  ],
+  "settings": [
+    {
+      "key": "invite",
+      "label": "How to invite people",
+      "type": "longtext",
+      "default": "Ask a moderator for an invite link, or share this community from its menu in Vector."
+    },
+    {
+      "key": "support",
+      "label": "Where to get help",
+      "type": "longtext",
+      "default": "Ask in the help channel, or open a ticket with !ticket, and a moderator will answer."
+    },
+    {
+      "key": "links",
+      "label": "Useful links",
+      "type": "longtext",
+      "default": "Vector: https://vectorapp.io"
+    }
+  ],
+  "commands": [
+    {
+      "name": "invite",
+      "help": "How to invite people",
+      "replies": [
+        "{settings.invite}"
+      ],
+      "cooldown": 20
+    },
+    {
+      "name": "support",
+      "help": "Where to get help",
+      "replies": [
+        "{settings.support}"
+      ],
+      "aliases": [
+        "helpme"
+      ],
+      "cooldown": 20
+    },
+    {
+      "name": "links",
+      "help": "Useful links",
+      "replies": [
+        "{settings.links}"
+      ],
+      "card": {
+        "title": "Links"
+      },
+      "cooldown": 20
+    }
+  ],
+  "autoresponders": [
+    {
+      "match": "contains",
+      "phrases": [
+        "how do i invite",
+        "how can i invite",
+        "invite link"
+      ],
+      "replies": [
+        "{user}, try {prefix}invite"
+      ],
+      "cooldown": 120
+    },
+    {
+      "match": "contains",
+      "phrases": [
+        "where can i get help",
+        "i need help",
+        "can someone help"
+      ],
+      "replies": [
+        "{user}, try {prefix}support"
+      ],
+      "cooldown": 120
+    }
+  ]
+}

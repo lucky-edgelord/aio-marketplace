@@ -1,0 +1,54 @@
+{
+  "format": "vectiq-module",
+  "spec": 1,
+  "id": "server_rules",
+  "label": "Server rules",
+  "help": "A !rules command, and a nudge when someone asks about the rules. Edit the rules from the dashboard.",
+  "group": "Community",
+  "version": "1.0.0",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "description": "Gives your community a !rules command that shows the rules as a card, and replies with a pointer when someone says \"rules\" in chat. Change the text under Settings → Server rules; no restart needed.",
+  "tags": [
+    "rules",
+    "starter"
+  ],
+  "settings": {
+    "defaults": {
+      "rules": "1. Be kind. No harassment, hate or personal attacks.\n2. No spam, scams or unsolicited ads.\n3. Keep it safe for work unless a channel says otherwise.\n4. No sharing other people's private information.\n5. Staff have the final word; ask if something is unclear."
+    },
+    "fields": [
+      {
+        "key": "rules",
+        "label": "The rules",
+        "type": "longtext",
+        "help": "Shown by the rules command. Line breaks are kept."
+      }
+    ]
+  },
+  "commands": [
+    {
+      "name": "rules",
+      "help": "Show the community rules",
+      "reply": "{cfg.rules}",
+      "embed": {
+        "title": "Rules for {community}",
+        "color": "59fcb3"
+      },
+      "aliases": [
+        "rule"
+      ],
+      "cooldown": 10
+    }
+  ],
+  "triggers": [
+    {
+      "match": "word",
+      "phrases": [
+        "rules"
+      ],
+      "reply": "Our rules are one command away: {prefix}rules",
+      "cooldown": 120
+    }
+  ]
+}

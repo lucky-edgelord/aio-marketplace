@@ -1,0 +1,89 @@
+{
+  "format": "vectiq-module",
+  "spec": 1,
+  "id": "faq_helper",
+  "label": "FAQ helper",
+  "help": "Commands for your invite link, support and help, plus answers to the questions newcomers always ask.",
+  "group": "Community",
+  "version": "1.0.0",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "description": "Three commands (invite, support, links) that read their text from settings, and two auto-replies for \"how do I join\" and \"where do I get help\". Fill in your own links under Settings → FAQ helper.",
+  "tags": [
+    "faq",
+    "support",
+    "starter"
+  ],
+  "settings": {
+    "defaults": {
+      "invite": "Share this community: set your invite link in Settings → FAQ helper.",
+      "support": "Need a hand? Open a ticket or ask in the help channel and a moderator will answer.",
+      "links": "Our links are not set yet: add them in Settings → FAQ helper."
+    },
+    "fields": [
+      {
+        "key": "invite",
+        "label": "Invite text",
+        "type": "longtext",
+        "help": ""
+      },
+      {
+        "key": "support",
+        "label": "Support text",
+        "type": "longtext",
+        "help": ""
+      },
+      {
+        "key": "links",
+        "label": "Useful links",
+        "type": "longtext",
+        "help": ""
+      }
+    ]
+  },
+  "commands": [
+    {
+      "name": "invite",
+      "help": "How to invite friends",
+      "reply": "{cfg.invite}",
+      "cooldown": 20
+    },
+    {
+      "name": "support",
+      "help": "Where to get help",
+      "reply": "{cfg.support}",
+      "aliases": [
+        "help-me"
+      ],
+      "cooldown": 20
+    },
+    {
+      "name": "links",
+      "help": "Useful links",
+      "reply": "{cfg.links}",
+      "cooldown": 20
+    }
+  ],
+  "triggers": [
+    {
+      "match": "contains",
+      "phrases": [
+        "how do i invite",
+        "how can i invite",
+        "invite link"
+      ],
+      "reply": "{mention}, try {prefix}invite",
+      "cooldown": 120
+    },
+    {
+      "match": "contains",
+      "phrases": [
+        "where can i get help",
+        "i need help",
+        "who can help"
+      ],
+      "reply": "{mention}, try {prefix}support",
+      "cooldown": 120
+    }
+  ]
+}

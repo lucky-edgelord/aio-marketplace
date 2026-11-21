@@ -1,0 +1,89 @@
+{
+  "format": "vectiq-module",
+  "spec": 1,
+  "id": "ai_automod",
+  "label": "AI automod",
+  "help": "An AI model reads each message against your rules and removes what breaks them. Works with Ollama, OpenAI, OpenRouter or any OpenAI-compatible API.",
+  "group": "Safety",
+  "version": "1.0.0",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "provides": "automod",
+  "description": "Runs a model of your choice over each message and applies your rules in plain words. It replaces the automod module (only one runs at a time). This pack carries Python code, so it only installs when 'Allow packs with code' is on. Messages are sent to the API address you configure: use a local model if that matters.",
+  "tags": [
+    "automod",
+    "ai",
+    "moderation",
+    "code"
+  ],
+  "settings": {
+    "defaults": {
+      "base_url": "http://localhost:11434/v1",
+      "model": "llama3.2",
+      "api_key_env": "",
+      "rules": "No harassment or hate. No spam or scams. No sexual content. No sharing personal information.",
+      "action": "delete",
+      "timeout_minutes": 10,
+      "min_chars": 12,
+      "max_per_minute": 30,
+      "exempt_roles": [],
+      "exempt_channels": []
+    },
+    "fields": [
+      {
+        "key": "base_url",
+        "label": "API address",
+        "type": "text",
+        "help": "An OpenAI-compatible /v1 address (OpenAI, OpenRouter, Ollama, LM Studio...)"
+      },
+      {
+        "key": "model",
+        "label": "Model",
+        "type": "text",
+        "help": ""
+      },
+      {
+        "key": "api_key_env",
+        "label": "API key variable",
+        "type": "text",
+        "help": "Name of the .env variable with the key"
+      },
+      {
+        "key": "rules",
+        "label": "Your rules",
+        "type": "longtext",
+        "help": "Plain words; the model judges messages against them"
+      },
+      {
+        "key": "action",
+        "label": "What to do",
+        "type": "enum",
+        "help": "",
+        "options": [
+          "delete",
+          "warn",
+          "timeout",
+          "log"
+        ]
+      },
+      {
+        "key": "min_chars",
+        "label": "Shortest message to check",
+        "type": "int",
+        "help": ""
+      },
+      {
+        "key": "max_per_minute",
+        "label": "Most checks per minute",
+        "type": "int",
+        "help": ""
+      }
+    ]
+  },
+  "code": {
+    "files": {
+      "__init__.py": "\"\"\"The module's manifest. Keep this file light: Vectiq reads it to list the module even while it's off.\"\"\"\n\nfrom vectiq.plugin import ACTIONS, Module, field\n\nMODULE = Module(\n    name=\"ai_automod\",\n    label=\"AI automod\",\n    help=\"An AI model reads each message against your rules and removes what breaks them\",\n    group=\"Safety\",\n    provides=\"automod\",                     # does automod's job instead of Sentire: one runs at a time\n    cogs=(\".cog\",),\n    defaults={\n        \"base_url\": \"http://localhost:11434/v1\",   # any OpenAI-compatible API; this is a local Ollama\n        \"model\": \"llama3.2\",\n        \"api_key_env\": \"\",                          # name of the .env variable holding the key (blank for Ollama)\n        \"rules\": \"No harassment or hate. No spam or scams. No sexual content. No sharing personal information.\",\n        \"action\": \"delete\",\n        \"timeout_minutes\": 10,\n        \"min_chars\": 12,                            # shorter messages aren't sent to the model\n        \"max_per_minute\": 30,                       # most model calls per minute; beyond that messages pass\n        \"exempt_roles\": [],\n        \"exempt_channels\": [],\n    },\n    settings=(\n        field(\"ai_automod.base_url\", \"API address\", \"text\", \"An OpenAI-compatible /v1 address (OpenAI, OpenRouter, \"\n              \"Ollama, LM Studio...)\"),\n        field(\"ai_automod.model\", \"Model\", \"text\"),\n        field(\"ai_automod.api_key_env\", \"API key variable\", \"text\", \"Name of the .env variable with the key\"),\n        field(\"ai_automod.rules\", \"Your rules\", \"longtext\", \"Plain words; the model judges messages against them\"),\n        field(\"ai_automod.action\", \"What to do\", \"enum\", options=ACTIONS),\n        field(\"ai_automod.min_chars\", \"Shortest message to check\", \"int\", minimum=1, maximum=2000),\n        field(\"ai_automod.max_per_minute\", \"Most checks per minute\", \"int\", minimum=1, maximum=10000),\n    ),\n    wizard=\"An AI will read messages against your rules. Point me at a model: a local one (Ollama) keeps \"\n           \"messages on your computer.\",\n    version=\"0.1.0\",\n    author=\"Vectiq\",\n)\n",
+      "cog.py": "\"\"\"AI automod: an LLM judges each message against the community's rules.\"\"\"\n\nfrom __future__ import annotations\n\nimport asyncio\nimport json\nimport logging\nimport os\nimport re\nimport time\nimport urllib.request\nfrom collections import deque\n\nfrom vector.ext import commands\n\nfrom vectiq.plugin import embed, enforce, exempt\n\nlog = logging.getLogger(\"vectiq.ai_automod\")\n\nPROMPT = \"\"\"You moderate a chat community. Its rules:\n{rules}\n\nDecide whether the message below breaks a rule. Answer with JSON only, like\n{{\"flag\": false, \"rule\": \"\", \"reason\": \"\"}}\nSet \"flag\" to true only for a clear break. Jokes, disagreement and swearing that isn't aimed at someone are fine.\"\"\"\n\n\ndef ask_model(cfg: dict, text: str) -> dict:\n    \"\"\"Blocking. Ask the model about one message. Returns {\"flag\": bool, \"rule\": str, \"reason\": str}.\"\"\"\n    key = os.environ.get(cfg.get(\"api_key_env\") or \"\", \"\")\n    body = {\"model\": cfg[\"model\"], \"temperature\": 0,\n            \"messages\": [{\"role\": \"system\", \"content\": PROMPT.format(rules=cfg[\"rules\"])},\n                         {\"role\": \"user\", \"content\": text[:2000]}]}\n    req = urllib.request.Request(cfg[\"base_url\"].rstrip(\"/\") + \"/chat/completions\", data=json.dumps(body).encode(),\n                                 headers={\"Content-Type\": \"application/json\",\n                                          **({\"Authorization\": f\"Bearer {key}\"} if key else {})})\n    with urllib.request.urlopen(req, timeout=30) as r:\n        reply = json.loads(r.read())[\"choices\"][0][\"message\"][\"content\"]\n    return parse(reply)\n\n\ndef parse(reply: str) -> dict:\n    m = re.search(r\"\\{.*\\}\", reply or \"\", re.S)\n    try:\n        data = json.loads(m.group(0)) if m else {}\n    except json.JSONDecodeError:\n        data = {}\n    return {\"flag\": bool(data.get(\"flag\")), \"rule\": str(data.get(\"rule\") or \"\"), \"reason\": str(data.get(\"reason\") or \"\")}\n\n\nclass AIAutomod(commands.Cog, name=\"AI automod\"):\n    def __init__(self, bot):\n        self.bot = bot\n        self.calls: deque[float] = deque()\n\n    @property\n    def cfg(self) -> dict:\n        return self.bot.config.get(\"ai_automod\", {})\n\n    def budget(self) -> bool:\n        now = time.monotonic()\n        while self.calls and now - self.calls[0] > 60:\n            self.calls.popleft()\n        if len(self.calls) >= int(self.cfg.get(\"max_per_minute\", 30)):\n            return False\n        self.calls.append(now)\n        return True\n\n    @commands.Cog.listener()\n    async def on_message(self, message):\n        cfg = self.cfg\n        if message.guild is None or not self.bot.serves(message.guild) or exempt(self.bot, message, cfg):\n            return\n        text = message.content or \"\"\n        if len(text.strip()) < int(cfg.get(\"min_chars\", 12)) or not self.budget():\n            return\n        try:\n            verdict = await asyncio.to_thread(ask_model, cfg, text)\n        except Exception as exc:  # noqa: BLE001 - the model being down must never remove messages\n            log.warning(\"AI automod: the model didn't answer: %s\", exc)\n            return\n        if verdict[\"flag\"]:\n            await enforce(self.bot, message, source=\"AI automod\", reason=verdict[\"rule\"] or \"that breaks a rule\",\n                          detail=verdict[\"reason\"], action=cfg.get(\"action\", \"delete\"),\n                          timeout_minutes=int(cfg.get(\"timeout_minutes\", 10)))\n\n    @commands.command(name=\"aicheck\")\n    @commands.has_permissions(manage_messages=True)\n    async def aicheck(self, ctx, *, text: str):\n        \"\"\"Ask the AI about a message without removing anything.\"\"\"\n        try:\n            v = await asyncio.to_thread(ask_model, self.cfg, text)\n        except Exception as exc:  # noqa: BLE001\n            return await ctx.send(f\"❌ The model didn't answer: {exc}\")\n        await ctx.send(embed=embed(\"AI automod\", (\"🚫 Would remove\" if v[\"flag\"] else \"✅ Fine\")\n                                   + (f\"\\n**Rule:** {v['rule']}\" if v[\"rule\"] else \"\")\n                                   + (f\"\\n**Why:** {v['reason']}\" if v[\"reason\"] else \"\")))\n\n\nasync def setup(bot):\n    await bot.add_cog(AIAutomod(bot))\n"
+    }
+  }
+}

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vectiq Marketplace</title>
+<meta name="description" content="Modules for Vectiq, the all-in-one Vector community bot: commands, auto-replies, scheduled posts and presets, each one a single JSON file.">
+<style>
+:root { --bg:#0b0b0c; --panel:#111113; --card:#151517; --raise:#1c1c1f; --line:#26262a; --text:#f2f2f3; --dim:#9a9ca3; --accent:#59fcb3; --accent-ink:#04130c; --warn:#ffc65c; --danger:#ff6b7a; }
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+a { color:var(--accent); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+header.top { padding: 56px 0 28px; border-bottom: 1px solid var(--line); }
+h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 12px; font-weight: 700; }
+h1 .dot { color: var(--accent); }
+.lead { max-width: 60ch; color: var(--dim); margin: 0 0 20px; font-size: 18px; }
+.how { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+code { background: var(--raise); padding: 2px 7px; border-radius: 6px; font-size: .88em; }
+.bar { display:flex; gap:10px; flex-wrap:wrap; margin: 24px 0 18px; }
+input[type=search], select { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius: 12px; padding: 11px 14px; font: inherit; min-width: 0; }
+input[type=search] { flex: 1 1 260px; }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); padding-bottom: 40px; }
+article { background:var(--card); border:1px solid var(--line); border-radius: 18px; padding: 18px; display:flex; flex-direction:column; gap:8px; }
+article h2 { font-size: 18px; margin: 0; }
+article p { margin: 0; color: var(--dim); font-size: 15px; }
+.meta { color: var(--dim); font-size: 13px; }
+.row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.pill { border:1px solid var(--line); border-radius: 999px; padding: 1px 10px; font-size: 12.5px; color: var(--dim); }
+.pill.module { color: var(--accent); border-color: #22a070; }
+.pill.preset { color: #7cb7ff; border-color: #2b4a73; }
+.pill.code { color: var(--danger); border-color: #6b2630; }
+.spacer { flex: 1; }
+.btn { display:inline-block; background:var(--accent); color:var(--accent-ink); border:0; border-radius: 999px; padding: 7px 16px; font: inherit; font-weight: 600; font-size: 14px; cursor:pointer; text-decoration:none; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.empty { color: var(--dim); padding: 40px 0; grid-column: 1/-1; text-align:center; }
+details { color: var(--dim); font-size: 14px; }
+details summary { cursor: pointer; }
+details ul { margin: 6px 0 0; padding-left: 18px; }
+footer { border-top: 1px solid var(--line); padding: 24px 0 48px; color: var(--dim); font-size: 14px; }
+.warn { color: var(--warn); font-size: 13px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1>Vectiq Marketplace<span class="dot">.</span></h1>
+  <p class="lead">Modules for <a href="https://github.com/lucky-edgelord/aio-vector-bot">Vectiq</a>, the all-in-one bot for Vector communities. Each one is a single JSON file: add it from the dashboard, or download it and keep it.</p>
+  <div class="how"><span>In the dashboard:</span> <code>Marketplace → Browse → Install</code> <span>· or from a terminal:</span> <code>vectiq --pack-install file.vqmodule.json</code></div>
+</div></header>
+<main class="wrap">
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search modules" aria-label="Search modules">
+    <select id="kind" aria-label="Kind"><option value="">Everything</option><option value="module">Ready to use</option><option value="preset">Presets</option><option value="code">With code</option></select>
+  </div>
+  <div id="grid" class="grid" aria-live="polite"><p class="empty">Loading…</p></div>
+</main>
+<footer><div class="wrap">
+  Want to add yours? See <a href="https://github.com/lucky-edgelord/aio-marketplace/blob/main/CONTRIBUTING.md">CONTRIBUTING</a>. Vectiq checks each file against the checksum in <a href="catalog.json">catalog.json</a> before it installs it. Packs marked “runs code” contain Python that runs on the bot's computer: read them first.
+</div></footer>
+<script>
+const RAW = "https://raw.githubusercontent.com/lucky-edgelord/aio-marketplace/main/";
+const KIND = { module: "Ready to use", preset: "Preset", code: "Runs code" };
+const grid = document.getElementById("grid"), q = document.getElementById("q"), kind = document.getElementById("kind");
+let all = [];
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) { if (k === "class") n.className = v; else if (v != null) n.setAttribute(k, v); }
+  for (const k of kids.flat()) if (k != null) n.append(k);
+  return n;
+}
+function facts(m) {
+  const bits = [];
+  if (m.commands.length) bits.push(`${m.commands.length} command${m.commands.length === 1 ? "" : "s"}`);
+  if (m.triggers) bits.push(`${m.triggers} auto-repl${m.triggers === 1 ? "y" : "ies"}`);
+  if (m.schedules) bits.push(`${m.schedules} scheduled post${m.schedules === 1 ? "" : "s"}`);
+  if (m.preset) bits.push(`${m.preset} setting${m.preset === 1 ? "" : "s"} changed`);
+  if (m.files.length) bits.push(`${m.files.length} Python file${m.files.length === 1 ? "" : "s"}`);
+  return bits.join(" · ");
+}
+function card(m) {
+  return el("article", null,
+    el("div", { class: "row" }, el("h2", null, m.label), el("span", { class: "spacer" }), el("span", { class: `pill ${m.kind}` }, KIND[m.kind] || m.kind)),
+    el("p", null, m.help),
+    el("div", { class: "meta" }, [`v${m.version}`, m.author && `by ${m.author}`, m.license, facts(m)].filter(Boolean).join(" · ")),
+    m.commands.length ? el("div", { class: "row" }, m.commands.map((c) => el("code", null, c))) : null,
+    m.kind === "code" ? el("div", { class: "warn" }, "Runs Python on the bot's computer. Needs “Allow packs with code”.") : null,
+    m.tags.length ? el("div", { class: "row" }, m.tags.map((t) => el("span", { class: "pill" }, t))) : null,
+    m.description ? el("details", null, el("summary", null, "More"), el("p", null, m.description)) : null,
+    el("div", { class: "row" }, el("span", { class: "spacer" }),
+      el("a", { class: "btn ghost", href: `${RAW}${m.file}`, download: `${m.id}.vqmodule.json` }, "Download JSON")));
+}
+function draw() {
+  const needle = q.value.trim().toLowerCase();
+  const shown = all.filter((m) => (!kind.value || m.kind === kind.value) && (!needle || [m.label, m.help, m.author, m.id, ...m.tags].join(" ").toLowerCase().includes(needle)));
+  grid.replaceChildren(...(shown.length ? shown.map(card) : [el("p", { class: "empty" }, "No modules match.")]));
+}
+fetch("catalog.json").then((r) => r.json()).then((c) => { all = c.modules; draw(); })
+  .catch(() => grid.replaceChildren(el("p", { class: "empty" }, "Couldn't load the catalog. Try again in a minute.")));
+q.addEventListener("input", draw); kind.addEventListener("change", draw);
+</script>
+</body>
+</html>

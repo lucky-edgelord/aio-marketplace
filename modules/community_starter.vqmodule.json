@@ -1,0 +1,46 @@
+{
+  "format": "vectiq-module",
+  "spec": 1,
+  "id": "community_starter",
+  "label": "Community starter",
+  "help": "A sensible first setup: welcome messages, verification, leveling, tickets, role menus, events and giveaways.",
+  "group": "Community",
+  "version": "1.0.0",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "description": "Switches on the modules most communities want on day one and sets calm defaults: warnings time people out, level-ups are announced, members can have two tickets open. Preview the changes before applying; a restore point is saved first, so you can undo it.",
+  "tags": [
+    "preset",
+    "starter",
+    "new community"
+  ],
+  "settings": {
+    "defaults": {},
+    "fields": []
+  },
+  "preset": {
+    "config": {
+      "welcome.enabled": true,
+      "welcome.message": "Welcome to {community}, {mention}! Say hi, and have a look at the rules.",
+      "leveling.announce": true,
+      "leveling.xp_min": 10,
+      "leveling.xp_max": 20,
+      "economy.daily_amount": 150,
+      "tickets.max_open_per_user": 1,
+      "moderation.warn_action": "timeout",
+      "verification.mode": "button"
+    },
+    "modules": {
+      "welcome": true,
+      "verification": true,
+      "onboarding": true,
+      "roles": true,
+      "tickets": true,
+      "events": true,
+      "utility": true,
+      "leveling": true,
+      "giveaways": true,
+      "moderation": true
+    }
+  }
+}

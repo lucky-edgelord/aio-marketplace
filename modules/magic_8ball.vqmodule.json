@@ -1,0 +1,74 @@
+{
+  "format": "vectiq-module",
+  "spec": 1,
+  "id": "magic_8ball",
+  "label": "Magic 8-ball & dice",
+  "help": "!8ball answers yes-or-no questions, !coin flips a coin and !dice rolls a die.",
+  "group": "Fun",
+  "version": "1.0.0",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "tags": [
+    "fun",
+    "games"
+  ],
+  "settings": {
+    "defaults": {},
+    "fields": []
+  },
+  "commands": [
+    {
+      "name": "8ball",
+      "help": "Ask the 8-ball a question",
+      "replies": [
+        "🎱 It is certain.",
+        "🎱 Without a doubt.",
+        "🎱 Yes, definitely.",
+        "🎱 Most likely.",
+        "🎱 Outlook good.",
+        "🎱 Signs point to yes.",
+        "🎱 Reply hazy, try again.",
+        "🎱 Ask again later.",
+        "🎱 Better not tell you now.",
+        "🎱 Cannot predict now.",
+        "🎱 Don't count on it.",
+        "🎱 My reply is no.",
+        "🎱 My sources say no.",
+        "🎱 Outlook not so good.",
+        "🎱 Very doubtful."
+      ],
+      "aliases": [
+        "eightball"
+      ],
+      "cooldown": 5
+    },
+    {
+      "name": "coin",
+      "help": "Flip a coin",
+      "replies": [
+        "🪙 Heads!",
+        "🪙 Tails!"
+      ],
+      "aliases": [
+        "flip"
+      ],
+      "cooldown": 3
+    },
+    {
+      "name": "dice",
+      "help": "Roll a six-sided die",
+      "replies": [
+        "🎲 {user} rolled a **1**",
+        "🎲 {user} rolled a **2**",
+        "🎲 {user} rolled a **3**",
+        "🎲 {user} rolled a **4**",
+        "🎲 {user} rolled a **5**",
+        "🎲 {user} rolled a **6**"
+      ],
+      "aliases": [
+        "roll"
+      ],
+      "cooldown": 3
+    }
+  ]
+}

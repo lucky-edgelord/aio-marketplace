@@ -1,0 +1,183 @@
+{
+ "format": "vectiq-marketplace",
+ "version": 1,
+ "repo": "lucky-edgelord/aio-marketplace",
+ "modules": [
+  {
+   "id": "ai_automod",
+   "file": "modules/ai_automod.vqmodule.json",
+   "label": "AI automod",
+   "help": "An AI model reads each message against your rules and removes what breaks them. Works with Ollama, OpenAI, OpenRouter or any OpenAI-compatible API.",
+   "description": "Runs a model of your choice over each message and applies your rules in plain words. It replaces the automod module (only one runs at a time). This pack carries Python code, so it only installs when 'Allow packs with code' is on. Messages are sent to the API address you configure: use a local model if that matters.",
+   "version": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "group": "Safety",
+   "tags": [
+    "automod",
+    "ai",
+    "moderation",
+    "code"
+   ],
+   "kind": "code",
+   "commands": [],
+   "triggers": 0,
+   "schedules": 0,
+   "settings": 7,
+   "preset": 0,
+   "files": [
+    "__init__.py",
+    "cog.py"
+   ],
+   "provides": "automod",
+   "bytes": 9008,
+   "sha256": "741fe9dae34b91937316df6e74a41b27f7cbc144d6fd970f12cd25477381ee60"
+  },
+  {
+   "id": "community_starter",
+   "file": "modules/community_starter.vqmodule.json",
+   "label": "Community starter",
+   "help": "A sensible first setup: welcome messages, verification, leveling, tickets, role menus, events and giveaways.",
+   "description": "Switches on the modules most communities want on day one and sets calm defaults: warnings time people out, level-ups are announced, members can have two tickets open. Preview the changes before applying; a restore point is saved first, so you can undo it.",
+   "version": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "group": "Community",
+   "tags": [
+    "preset",
+    "starter",
+    "new community"
+   ],
+   "kind": "preset",
+   "commands": [],
+   "triggers": 0,
+   "schedules": 0,
+   "settings": 0,
+   "preset": 19,
+   "files": [],
+   "provides": "",
+   "bytes": 1404,
+   "sha256": "6505d4d8e448f741d923b0f85cec99bfc12eb70bd1b37c3714dfda3bb420a63f"
+  },
+  {
+   "id": "daily_question",
+   "file": "modules/daily_question.vqmodule.json",
+   "label": "Daily question",
+   "help": "Posts a conversation starter in a channel every day at a time you choose, and adds a !question command.",
+   "description": "Thirty friendly conversation starters. One is posted each day at the time you set, in the channel you set (in every community the bot serves that has it), and anyone can ask for another with !question. Set the channel, time and time zone under Settings → Daily question.",
+   "version": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "group": "Community",
+   "tags": [
+    "engagement",
+    "chat",
+    "schedule"
+   ],
+   "kind": "module",
+   "commands": [
+    "question"
+   ],
+   "triggers": 0,
+   "schedules": 1,
+   "settings": 3,
+   "preset": 0,
+   "files": [],
+   "provides": "",
+   "bytes": 5117,
+   "sha256": "c0c68ebd68a6a073f8eb114085a788be0b8cee08e79b642bdcf778bed4832612"
+  },
+  {
+   "id": "faq_helper",
+   "file": "modules/faq_helper.vqmodule.json",
+   "label": "FAQ helper",
+   "help": "Commands for your invite link, support and help, plus answers to the questions newcomers always ask.",
+   "description": "Three commands (invite, support, links) that read their text from settings, and two auto-replies for \"how do I join\" and \"where do I get help\". Fill in your own links under Settings → FAQ helper.",
+   "version": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "group": "Community",
+   "tags": [
+    "faq",
+    "support",
+    "starter"
+   ],
+   "kind": "module",
+   "commands": [
+    "invite",
+    "support",
+    "links"
+   ],
+   "triggers": 2,
+   "schedules": 0,
+   "settings": 3,
+   "preset": 0,
+   "files": [],
+   "provides": "",
+   "bytes": 2176,
+   "sha256": "28fe2edc575f6ad0ea841b09560be78741cc6c211cf589ad36e20f033a42d131"
+  },
+  {
+   "id": "magic_8ball",
+   "file": "modules/magic_8ball.vqmodule.json",
+   "label": "Magic 8-ball & dice",
+   "help": "!8ball answers yes-or-no questions, !coin flips a coin and !dice rolls a die.",
+   "description": "",
+   "version": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "group": "Fun",
+   "tags": [
+    "fun",
+    "games"
+   ],
+   "kind": "module",
+   "commands": [
+    "8ball",
+    "coin",
+    "dice"
+   ],
+   "triggers": 0,
+   "schedules": 0,
+   "settings": 0,
+   "preset": 0,
+   "files": [],
+   "provides": "",
+   "bytes": 1677,
+   "sha256": "665a6a3b28de011400d2185fc9e8ad5b07f5b2c1f3d1e442f0c79a030a2a2319"
+  },
+  {
+   "id": "server_rules",
+   "file": "modules/server_rules.vqmodule.json",
+   "label": "Server rules",
+   "help": "A !rules command, and a nudge when someone asks about the rules. Edit the rules from the dashboard.",
+   "description": "Gives your community a !rules command that shows the rules as a card, and replies with a pointer when someone says \"rules\" in chat. Change the text under Settings → Server rules; no restart needed.",
+   "version": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "",
+   "group": "Community",
+   "tags": [
+    "rules",
+    "starter"
+   ],
+   "kind": "module",
+   "commands": [
+    "rules"
+   ],
+   "triggers": 1,
+   "schedules": 0,
+   "settings": 1,
+   "preset": 0,
+   "files": [],
+   "provides": "",
+   "bytes": 1556,
+   "sha256": "501469ac9534c10c5202c26f8efa2cabca15b3420ae75d8085673bcdffcc0177"
+  }
+ ]
+}

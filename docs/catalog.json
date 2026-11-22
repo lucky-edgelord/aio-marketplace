@@ -464,6 +464,65 @@
    "sha256": "0f875516fb150815fbd447f98c38ecbe64e8a72384514e9da544afdad8424a42"
   },
   {
+   "id": "visualnovel",
+   "name": "Visual Novel",
+   "summary": "Talk with Gwen, an AI visual-novel character who answers as a scene: her expression, where you are, her line in the dialogue box.",
+   "description": "Visual Novel turns chat into a visual novel. Type !vn and a message, and Gwen answers with a scene: one of her 11 expressions, picked by the AI to match what she says, in one of 7 places (bridge, swing, grove, path, greenhouse, house, table), with her line in the dialogue box. The same line is in the message as text, so it's easy to read on a phone. Reply to her scene to keep talking. Long answers get ◀️ ▶️ page reactions, and 🗺️ opens the map: react 1-7 to walk somewhere together, or use !vngo grove. Everyone has their own scene and conversation. !vnreset makes her forget yours, and !vnface shows an expression. List channels under \"Chat in these channels\" and she answers every message there, no command needed. Change her name and personality in the settings to make her someone else.\n\nNeeds an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. Her pictures (about 1.4 MB) are downloaded from this marketplace the first time she's needed and kept. This module runs Python, so it needs Settings → Marketplace → Allow modules with code. Rewritten from atorsvn/visual_novel_chat_poc.",
+   "group": "Fun",
+   "release": "1.0.0",
+   "author": "atorsvn, lucky-edgelord",
+   "license": "MIT",
+   "homepage": "https://github.com/atorsvn/visual_novel_chat_poc",
+   "tags": [
+    "ai",
+    "anime",
+    "visual-novel",
+    "chat",
+    "roleplay"
+   ],
+   "kind": "code",
+   "provides": "",
+   "icon": "media/visualnovel/icon.png",
+   "images": [
+    {
+     "src": "media/visualnovel/talking.webp",
+     "caption": "She answers as a scene, with the expression the AI picks"
+    },
+    {
+     "src": "media/visualnovel/map.webp",
+     "caption": "React 1-7 on the map to go somewhere together"
+    }
+   ],
+   "commands": [],
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [
+    "Her name",
+    "Personality",
+    "Where you meet",
+    "Chat in these channels",
+    "Also in DMs",
+    "Ollama address",
+    "Model",
+    "API key variable in .env",
+    "Creativity",
+    "Messages she remembers",
+    "Seconds to wait for the model",
+    "Pictures from"
+   ],
+   "files": [
+    "__init__.py",
+    "cog.py",
+    "scene.py",
+    "store.py",
+    "story.py"
+   ],
+   "packages": [],
+   "file": "visualnovel.module.json",
+   "bytes": 34901,
+   "sha256": "693126582b71d481c11b59b045c902ecef8989f3821432bec0abdea32c3b44d2"
+  },
+  {
    "id": "ai_automod",
    "name": "AI automod",
    "summary": "An AI model reads each message against your rules and removes what breaks them.",

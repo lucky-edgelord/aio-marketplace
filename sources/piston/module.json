@@ -1,0 +1,106 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "piston",
+  "name": "Run code",
+  "group": "Utility",
+  "release": "1.0.0",
+  "summary": "!run code in 80+ languages right in chat, on a Piston server. Edit your message to run it again.",
+  "description": "Run code is engineer-man's piston-bot for Vectiq. Type !run and a language, then your code in a code block, and the bot answers with the output, the exit code and how long it took. Lines between the command and the block are command-line arguments; lines after it are standard input. You can attach a source file instead (the extension picks the language), or reply !run to someone's message that has a code block. C, C++, Go, Java, Rust, Scala and C# get their main() added when you leave it out. Edit your message and the answer updates; delete it and the answer goes too. !langs lists the languages, !rundel removes your last answer. Output is limited to 30 lines, and each person gets a few runs a minute.\n\nThe code runs on a Piston server, never on the bot's computer. Piston's public server has been whitelist-only since February 2026, so run your own: docker run -d --privileged -p 2000:2000 ghcr.io/engineer-man/piston, install the languages you want with its CLI, then set Piston server to http://localhost:2000/api/v2/piston. If you have a whitelisted key, put it in .env as PISTON_API_KEY. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+  "author": "engineer-man, lucky-edgelord",
+  "license": "MIT",
+  "homepage": "https://github.com/engineer-man/piston-bot",
+  "tags": [
+    "code",
+    "programming",
+    "developer",
+    "piston",
+    "utility"
+  ],
+  "icon": "media/piston/icon.png",
+  "images": [
+    {
+      "src": "media/piston/run.webp",
+      "caption": "!run python and a code block"
+    },
+    {
+      "src": "media/piston/errors.webp",
+      "caption": "main() is added for compiled languages"
+    }
+  ],
+  "settings": [
+    {
+      "key": "piston_url",
+      "label": "Piston server",
+      "type": "text",
+      "default": "https://emkc.org/api/v2/piston",
+      "help": "Your own Piston, like http://localhost:2000/api/v2/piston. The public one needs a whitelisted key."
+    },
+    {
+      "key": "api_key_env",
+      "label": "Key variable in .env",
+      "type": "text",
+      "default": "PISTON_API_KEY",
+      "help": "Only needed for a server that asks for a key"
+    },
+    {
+      "key": "channels",
+      "label": "Only in these channels",
+      "type": "list",
+      "default": [],
+      "help": "Channel names or ids. Empty means everywhere."
+    },
+    {
+      "key": "allow_dms",
+      "label": "Also in DMs",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "edit_to_rerun",
+      "label": "Edit a message to run it again",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "runs_per_minute",
+      "label": "Runs per person per minute",
+      "type": "int",
+      "default": 6,
+      "min": 0,
+      "max": 120
+    },
+    {
+      "key": "max_lines",
+      "label": "Lines of output shown",
+      "type": "int",
+      "default": 30,
+      "min": 5,
+      "max": 80
+    },
+    {
+      "key": "run_timeout_ms",
+      "label": "Run time limit (ms)",
+      "type": "int",
+      "default": 3000,
+      "min": 500,
+      "max": 60000
+    },
+    {
+      "key": "compile_timeout_ms",
+      "label": "Compile time limit (ms)",
+      "type": "int",
+      "default": 10000,
+      "min": 1000,
+      "max": 60000
+    },
+    {
+      "key": "request_timeout",
+      "label": "Seconds to wait for the server",
+      "type": "int",
+      "default": 30,
+      "min": 5,
+      "max": 300
+    }
+  ]
+}

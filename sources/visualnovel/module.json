@@ -1,0 +1,126 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "visualnovel",
+  "name": "Visual Novel",
+  "group": "Fun",
+  "release": "1.0.0",
+  "summary": "Talk with Gwen, an AI visual-novel character who answers as a scene: her expression, where you are, her line in the dialogue box.",
+  "description": "Visual Novel turns chat into a visual novel. Type !vn and a message, and Gwen answers with a scene: one of her 11 expressions, picked by the AI to match what she says, in one of 7 places (bridge, swing, grove, path, greenhouse, house, table), with her line in the dialogue box. The same line is in the message as text, so it's easy to read on a phone. Reply to her scene to keep talking. Long answers get ◀️ ▶️ page reactions, and 🗺️ opens the map: react 1-7 to walk somewhere together, or use !vngo grove. Everyone has their own scene and conversation. !vnreset makes her forget yours, and !vnface shows an expression. List channels under \"Chat in these channels\" and she answers every message there, no command needed. Change her name and personality in the settings to make her someone else.\n\nNeeds an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. Her pictures (about 1.4 MB) are downloaded from this marketplace the first time she's needed and kept. This module runs Python, so it needs Settings → Marketplace → Allow modules with code. Rewritten from atorsvn/visual_novel_chat_poc.",
+  "author": "atorsvn, lucky-edgelord",
+  "license": "MIT",
+  "homepage": "https://github.com/atorsvn/visual_novel_chat_poc",
+  "tags": [
+    "ai",
+    "anime",
+    "visual-novel",
+    "chat",
+    "roleplay"
+  ],
+  "icon": "media/visualnovel/icon.png",
+  "images": [
+    {
+      "src": "media/visualnovel/talking.webp",
+      "caption": "She answers as a scene, with the expression the AI picks"
+    },
+    {
+      "src": "media/visualnovel/map.webp",
+      "caption": "React 1-7 on the map to go somewhere together"
+    }
+  ],
+  "settings": [
+    {
+      "key": "character_name",
+      "label": "Her name",
+      "type": "text",
+      "default": "Gwen"
+    },
+    {
+      "key": "persona",
+      "label": "Personality",
+      "type": "longtext",
+      "default": "",
+      "help": "Who she is and how she talks. Empty uses the built-in Gwen."
+    },
+    {
+      "key": "start_place",
+      "label": "Where you meet",
+      "type": "enum",
+      "default": "bridge",
+      "options": [
+        "bridge",
+        "swing",
+        "grove",
+        "path",
+        "greenhouse",
+        "house",
+        "table"
+      ]
+    },
+    {
+      "key": "channels",
+      "label": "Chat in these channels",
+      "type": "list",
+      "default": [],
+      "help": "She answers every message in these channels without !vn"
+    },
+    {
+      "key": "allow_dms",
+      "label": "Also in DMs",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "ollama_host",
+      "label": "Ollama address",
+      "type": "text",
+      "default": "https://ollama.com",
+      "help": "ollama.com (cloud, needs a key) or your own server, like http://localhost:11434"
+    },
+    {
+      "key": "model",
+      "label": "Model",
+      "type": "text",
+      "default": "gpt-oss:120b"
+    },
+    {
+      "key": "api_key_env",
+      "label": "API key variable in .env",
+      "type": "text",
+      "default": "OLLAMA_API_KEY"
+    },
+    {
+      "key": "temperature",
+      "label": "Creativity",
+      "type": "number",
+      "default": 0.8,
+      "help": "0 is predictable, 1.5 is wild",
+      "min": 0,
+      "max": 2
+    },
+    {
+      "key": "history_messages",
+      "label": "Messages she remembers",
+      "type": "int",
+      "default": 20,
+      "help": "Per person; older ones are dropped",
+      "min": 2,
+      "max": 200
+    },
+    {
+      "key": "timeout",
+      "label": "Seconds to wait for the model",
+      "type": "int",
+      "default": 90,
+      "min": 10,
+      "max": 600
+    },
+    {
+      "key": "assets_url",
+      "label": "Pictures from",
+      "type": "text",
+      "default": "",
+      "help": "Leave empty for this marketplace, or a folder on the bot's computer"
+    }
+  ]
+}

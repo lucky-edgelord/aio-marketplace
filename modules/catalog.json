@@ -180,9 +180,9 @@
    "id": "vectoria",
    "name": "Vectoria",
    "summary": "A talking pixel-art expert on Vector bots and WebXDC: !vec answers in text, !vectoria in a lip-synced video.",
-   "description": "Vectoria knows the Vector SDKs (Python, Rust, JS) and WebXDC Mini Apps, and searches the web when her notes don't cover something. Ask with !vec for a text answer (code included), or !vectoria for a short video: her sprite lip-syncs to a retro SAM voice under a VHS filter, with C64-style subtitles. Reply to any of her answers to keep talking. She remembers each person (!vecmemory, !vecforget), and 👍/👎 votes are kept.\n\nNeeds: an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. For videos: ffmpeg, plus her voice, which an owner builds once with !vecvoice (git and a C compiler). Without those she still answers in text. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+   "description": "Vectoria knows the Vector SDKs (Python, Rust, JS) and WebXDC Mini Apps, and searches the web when her notes don't cover something. Ask with !vec for a text answer (code included), or !vectoria for a short video: her sprite lip-syncs to a retro SAM voice under a VHS filter, with C64-style subtitles. Reply to any of her answers to keep talking. She remembers each person (!vecmemory, !vecforget), and 👍/👎 votes are kept. Owners can give the bot her name and picture with !vecprofile, or the button on her dashboard page.\n\nNeeds: an Ollama API key (ollama.com, free tier works) in the bot's .env as OLLAMA_API_KEY, or a local Ollama. For videos: ffmpeg, plus her voice, which an owner builds once with !vecvoice (git and a C compiler). Without those she still answers in text. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
    "group": "Fun",
-   "release": "1.0.2",
+   "release": "1.1.0",
    "author": "lucky-edgelord",
    "license": "MIT",
    "homepage": "https://lucky-edgelord.github.io/aio-marketplace/",
@@ -251,8 +251,8 @@
    ],
    "packages": [],
    "file": "vectoria.module.json",
-   "bytes": 427101,
-   "sha256": "27cf6687b7c800031e84522e0d2f6e8ee096989728eae212327e96301ffca5eb"
+   "bytes": 450722,
+   "sha256": "0f875516fb150815fbd447f98c38ecbe64e8a72384514e9da544afdad8424a42"
   },
   {
    "id": "ai_automod",

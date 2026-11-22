@@ -270,6 +270,15 @@ def frames(size: int, vhs: bool, strength: float) -> dict:
     return _FRAMES[key]
 
 
+def avatar_png(data_dir: str) -> str:
+    """Her profile picture as a PNG file in the data folder (written once); returns its path."""
+    path = Path(data_dir) / "vectoria" / "avatar.png"
+    if not path.is_file():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        Image.open(io.BytesIO(base64.b64decode(assets()["avatar"]))).convert("RGB").save(path, format="PNG")
+    return str(path.resolve())
+
+
 def still_png(size: int = 512) -> bytes:
     bg = backdrop(size).convert("RGBA")
     sprite = Image.open(io.BytesIO(base64.b64decode(assets()["sprites"]["open_closed"]))).convert("RGBA")

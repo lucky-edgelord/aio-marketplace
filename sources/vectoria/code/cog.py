@@ -17,6 +17,8 @@ from . import brain, video
 
 log = logging.getLogger("vectiq.vectoria")
 THUMBS = {"👍": 1, "👎": -1}
+PROFILE_NAME = "Vectoria"
+PROFILE_ABOUT = "Vector SDK and WebXDC expert. Ask me with !vec (text) or !vectoria (a short video)."
 MAX_TEXT = 3800  # one chat message
 
 
@@ -166,6 +168,33 @@ class Vectoria(commands.Cog, name="Vectoria"):
     async def vecface(self, ctx):
         await ctx.reply(file=vector.File(await asyncio.to_thread(video.still_png), filename="vectoria.png"))
 
+    @commands.command(name="vecprofile", help="Owners: give the bot Vectoria's name, about text and picture")
+    async def vecprofile(self, ctx):
+        if not await self.is_owner(ctx):
+            return await ctx.reply("Only the bot's owners can change its profile.")
+        try:
+            await self.become_vectoria(str(getattr(ctx.author, "npub", "") or ctx.author.id))
+        except Exception as e:  # noqa: BLE001
+            return await ctx.reply(f"❌ Couldn't change the profile: {e}")
+        await ctx.reply("✅ I'm Vectoria now: name, about text and picture. It can take a minute to show everywhere.")
+
+    def is_vectoria(self) -> bool:
+        me = self.bot.user
+        name = getattr(getattr(me, "_profile", None), "name", None) or getattr(me, "name", "")
+        return name == PROFILE_NAME
+
+    async def become_vectoria(self, by: str) -> None:
+        """Her name, about text and picture on the bot's account. Through Vectiq's profile settings when it has
+        them, so the profile stays the same after restarts and on other computers; directly otherwise."""
+        picture = await asyncio.to_thread(video.avatar_png, self.data_dir)
+        if hasattr(self.bot, "change_settings"):
+            await self.bot.change_settings({"profile.name": PROFILE_NAME, "profile.about": PROFILE_ABOUT,
+                                            "profile.avatar": picture}, by)
+            if hasattr(self.bot, "apply_profile"):
+                await self.bot.apply_profile()
+        else:
+            await self.bot.user.edit(username=PROFILE_NAME, about=PROFILE_ABOUT, avatar=picture)
+
     @commands.command(name="vecvoice", help="Owners: build Vectoria's voice (SAM) on this computer")
     async def vecvoice(self, ctx):
         if not await self.is_owner(ctx):
@@ -244,7 +273,7 @@ class Vectoria(commands.Cog, name="Vectoria"):
         sections = [{"type": "status", "items": items}]
         notes = []
         if why:
-            notes.append(f"No videos yet: {why}." + (" Press **Build her voice** below." if "SAM" in why else ""))
+            notes.append(f"No videos yet: {why}." + (" Press “Build her voice” below." if "SAM" in why else ""))
         if not s.key and "ollama.com" in s.host:
             key_env = self.cfg.get("api_key_env") or "OLLAMA_API_KEY"
             notes.append(f"Put an Ollama API key in the bot's .env as {key_env} (ollama.com → Settings → Keys).")
@@ -258,7 +287,12 @@ class Vectoria(commands.Cog, name="Vectoria"):
                 {"title": r["prompt"][:120], "detail": time.strftime("%b %d %H:%M", time.localtime(r["at"])),
                  "tag": r["mode"] + (f" {'+' if r['score'] > 0 else ''}{r['score']}" if r["score"] else "")}
                 for r in recent]})
+        if not self.is_vectoria():
+            sections.insert(1, {"type": "text", "text": "The bot isn't called Vectoria yet. “Make the bot Vectoria” "
+                                "gives its Vector account her name, about text and picture."})
         sections.append({"type": "actions", "items": [
+            *([{"id": "become", "label": "Make the bot Vectoria", "kind": "primary", "owner": True}]
+              if not self.is_vectoria() else []),
             *([{"id": "build_voice", "label": "Build her voice", "owner": True}] if not self.sam else []),
             {"id": "forget_all", "label": "Forget everyone", "kind": "danger", "owner": True,
              "confirm": "Clear every conversation and memory? Votes are kept."},
@@ -271,6 +305,9 @@ class Vectoria(commands.Cog, name="Vectoria"):
                 return f"Voice ready: {await self.build_voice()}"
             except video.RenderError as e:
                 raise RuntimeError(f"Couldn't build SAM: {e}") from e
+        if action == "become":
+            await self.become_vectoria(viewer or "dashboard")
+            return "Done: the bot is Vectoria now. It can take a minute to show everywhere."
         if action == "forget_all":
             await asyncio.to_thread(self.store.forget_all)
             return "Every conversation and memory is cleared."

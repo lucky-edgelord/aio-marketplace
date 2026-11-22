@@ -5,7 +5,8 @@
  "groups": [
   "Community",
   "Fun",
-  "Safety"
+  "Safety",
+  "Utility"
  ],
  "modules": [
   {
@@ -561,6 +562,62 @@
    "file": "ai_automod.module.json",
    "bytes": 8828,
    "sha256": "29d69d2df23be2a3d4801fde36aa666b5fde31617031d5bd08d0b72fd8dadad9"
+  },
+  {
+   "id": "piston",
+   "name": "Run code",
+   "summary": "!run code in 80+ languages right in chat, on a Piston server. Edit your message to run it again.",
+   "description": "Run code is engineer-man's piston-bot for Vectiq. Type !run and a language, then your code in a code block, and the bot answers with the output, the exit code and how long it took. Lines between the command and the block are command-line arguments; lines after it are standard input. You can attach a source file instead (the extension picks the language), or reply !run to someone's message that has a code block. C, C++, Go, Java, Rust, Scala and C# get their main() added when you leave it out. Edit your message and the answer updates; delete it and the answer goes too. !langs lists the languages, !rundel removes your last answer. Output is limited to 30 lines, and each person gets a few runs a minute.\n\nThe code runs on a Piston server, never on the bot's computer. Piston's public server has been whitelist-only since February 2026, so run your own: docker run -d --privileged -p 2000:2000 ghcr.io/engineer-man/piston, install the languages you want with its CLI, then set Piston server to http://localhost:2000/api/v2/piston. If you have a whitelisted key, put it in .env as PISTON_API_KEY. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+   "group": "Utility",
+   "release": "1.0.0",
+   "author": "engineer-man, lucky-edgelord",
+   "license": "MIT",
+   "homepage": "https://github.com/engineer-man/piston-bot",
+   "tags": [
+    "code",
+    "programming",
+    "developer",
+    "piston",
+    "utility"
+   ],
+   "kind": "code",
+   "provides": "",
+   "icon": "media/piston/icon.png",
+   "images": [
+    {
+     "src": "media/piston/run.webp",
+     "caption": "!run python and a code block"
+    },
+    {
+     "src": "media/piston/errors.webp",
+     "caption": "main() is added for compiled languages"
+    }
+   ],
+   "commands": [],
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [
+    "Piston server",
+    "Key variable in .env",
+    "Only in these channels",
+    "Also in DMs",
+    "Edit a message to run it again",
+    "Runs per person per minute",
+    "Lines of output shown",
+    "Run time limit (ms)",
+    "Compile time limit (ms)",
+    "Seconds to wait for the server"
+   ],
+   "files": [
+    "__init__.py",
+    "codeswap.py",
+    "cog.py",
+    "parse.py"
+   ],
+   "packages": [],
+   "file": "piston.module.json",
+   "bytes": 25682,
+   "sha256": "2c1cc2b249a0d1322080ae3ae5e9030c6ae54f00d02d72ef3c7bb8081142d6af"
   }
  ]
 }

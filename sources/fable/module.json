@@ -1,0 +1,146 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "fable",
+  "name": "Fable",
+  "group": "Fun",
+  "release": "1.0.0",
+  "summary": "A Mudae-style character gacha: !roll anime characters, react to claim them, then collect, wish, trade, steal and merge.",
+  "description": "Fable is a character-collecting game, in the style of Mudae and the Fable bot. Type !roll and a random anime character appears with a rating from 1 to 5 stars (odds 50/30/15/4/1 percent). React with the claim emoji, or type !claim, and the first person to do so takes the character home. Everyone gets an hourly allowance of rolls and one claim every few hours. Each character belongs to one person per community.\n\nCollect with !harem, look characters up with !im, and !wish for the ones you want so you get first pick when they appear. Put favourites in your !party. !givechar and !trade move characters between people (the other person confirms with a reaction). !steal tries to take one from someone, with a chance set by its rating that grows when the owner has been away. !merge turns five characters of one rating into one of the next. !divorce releases a character for coins; coins also come from !fdaily and buy roll resets and guaranteed high-rating pulls in !fshop with !fbuy. !tu shows your rolls and cooldowns.\n\nThe 2,500 characters were collected from AniList when the module was built; nothing calls an API while playing except downloading each picture once (kept afterwards). Everything is adjustable: rolls per hour, claim cooldown and window, channels, and which features are allowed. This module runs Python, so it needs Settings → Marketplace → Allow modules with code. Cards are drawn from AniList's character pictures, which belong to their rights holders.",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "homepage": "https://github.com/ker0olos/fable",
+  "tags": [
+    "gacha",
+    "anime",
+    "game",
+    "collection",
+    "mudae"
+  ],
+  "icon": "media/fable/icon.png",
+  "images": [
+    {
+      "src": "media/fable/roll.webp",
+      "caption": "!roll a character, react to claim it"
+    },
+    {
+      "src": "media/fable/collection.webp",
+      "caption": "Collect, trade, steal and merge"
+    }
+  ],
+  "settings": [
+    {
+      "key": "rolls_per_hour",
+      "label": "Rolls per hour",
+      "type": "int",
+      "default": 10,
+      "help": "How many !roll each person gets per hour",
+      "min": 1,
+      "max": 100
+    },
+    {
+      "key": "claim_cooldown_hours",
+      "label": "Hours between claims",
+      "type": "number",
+      "default": 3,
+      "help": "Each person can claim one character per this many hours",
+      "min": 0,
+      "max": 48
+    },
+    {
+      "key": "claim_window_seconds",
+      "label": "Seconds to claim a roll",
+      "type": "int",
+      "default": 30,
+      "help": "How long a rolled character can be claimed",
+      "min": 5,
+      "max": 600
+    },
+    {
+      "key": "wish_priority_seconds",
+      "label": "Wish priority (seconds)",
+      "type": "int",
+      "default": 10,
+      "help": "People who wished for a character get this long to claim it first",
+      "min": 0,
+      "max": 120
+    },
+    {
+      "key": "claim_emoji",
+      "label": "Claim emoji",
+      "type": "text",
+      "default": "💖",
+      "help": "React with this to claim"
+    },
+    {
+      "key": "channels",
+      "label": "Play only in these channels",
+      "type": "list",
+      "default": [],
+      "help": "Channel names or ids. Empty means everywhere."
+    },
+    {
+      "key": "skip_owned",
+      "label": "Avoid characters that are already owned",
+      "type": "bool",
+      "default": false,
+      "help": "Rolls pick unowned characters when there are any"
+    },
+    {
+      "key": "allow_trading",
+      "label": "Allow !givechar and !trade",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "allow_stealing",
+      "label": "Allow !steal",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "steal_cost",
+      "label": "Coins per steal attempt",
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 10000
+    },
+    {
+      "key": "steal_cooldown_hours",
+      "label": "Hours between steal attempts",
+      "type": "number",
+      "default": 24,
+      "min": 0,
+      "max": 720
+    },
+    {
+      "key": "allow_merging",
+      "label": "Allow !merge",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "allow_shop",
+      "label": "Allow !fshop",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "daily_coins",
+      "label": "Coins from !fdaily",
+      "type": "int",
+      "default": 100,
+      "min": 0,
+      "max": 100000
+    },
+    {
+      "key": "page_size",
+      "label": "Characters per !harem page",
+      "type": "int",
+      "default": 10,
+      "min": 3,
+      "max": 25
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "quantum",
+  "name": "Quantum",
+  "group": "Education",
+  "release": "1.0.0",
+  "summary": "Quantum circuits in chat: write them in Q text, micro QASM or MicroQiskit and get an IBM-style picture with probabilities and Bloch spheres.",
+  "description": "Quantum brings the Quantum Web Lab into chat. Send !qc with a circuit in a code block and the bot answers with a picture in the style of IBM Quantum Composer: the circuit with colour-coded gates, the measured results or exact probabilities, and a 3D Bloch sphere for every qubit.\n\nWrite circuits the way you like: Q text (H-X#0-M, one row per qubit), micro QASM (OpenQASM 3 or 2), MicroQiskit (Qiskit-style Python: qc = QuantumCircuit(2, 2), qc.h(0), qc.cx(0, 1)), or console lines (h 0, cx 0 1). Or build your own circuit a step at a time: !qc h 0, !qc cx 0 1, !qc run, !qc undo, !qc reset, !qc explain h. Add shots=2000 seed=7 on the first line, text for the results as text (a diagram, bars and Bloch arrows in code blocks), or -> qasm, -> qasm2, -> python, -> q or -> diagram to convert a circuit instead of running it. !qlab sends the whole Quantum Web Lab as a mini app: a touch composer with a Bloch sphere, code in three languages, a console and challenges.\n\nUp to 12 qubits. MicroQiskit code is never run as real Python: a small interpreter reads only circuit code (assignments, for, if, print, MicroQiskit and math), with limits on steps, gates and output. Like Qiskit, qubit 0 is the right-most digit of a result. Fonts are IBM Plex (SIL Open Font License); the fonts and the lab (about 1 MB) are downloaded from this marketplace the first time they're needed. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "homepage": "https://github.com/lucky-edgelord/quantum-web-lab",
+  "tags": [
+    "quantum",
+    "education",
+    "science",
+    "qiskit",
+    "qasm"
+  ],
+  "icon": "media/quantum/icon.png",
+  "images": [
+    {
+      "src": "media/quantum/ghz.webp",
+      "caption": "A GHZ state in Q text: the circuit, 1,024 shots and Bloch spheres"
+    },
+    {
+      "src": "media/quantum/bloch.webp",
+      "caption": "MicroQiskit code with exact probabilities and each qubit's arrow"
+    }
+  ],
+  "settings": [
+    {
+      "key": "channels",
+      "label": "Only in these channels",
+      "type": "list",
+      "default": [],
+      "help": "Channel names or ids. Empty means everywhere."
+    },
+    {
+      "key": "allow_dms",
+      "label": "Also in DMs",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "output",
+      "label": "Answer with",
+      "type": "enum",
+      "options": [
+        "picture",
+        "text",
+        "both"
+      ],
+      "default": "picture",
+      "help": "A picture, text in code blocks, or both. Anyone can add text or picture to the first line."
+    },
+    {
+      "key": "shots",
+      "label": "Shots",
+      "type": "int",
+      "default": 1024,
+      "help": "How many times a measured circuit is run",
+      "min": 1,
+      "max": 100000
+    },
+    {
+      "key": "max_qubits",
+      "label": "Most qubits",
+      "type": "int",
+      "default": 12,
+      "min": 1,
+      "max": 14
+    },
+    {
+      "key": "max_gates",
+      "label": "Most gates",
+      "type": "int",
+      "default": 500,
+      "min": 10,
+      "max": 5000
+    },
+    {
+      "key": "max_spheres",
+      "label": "Bloch spheres shown",
+      "type": "int",
+      "default": 4,
+      "help": "Shown in one row; qubits past this get no sphere",
+      "min": 0,
+      "max": 6
+    },
+    {
+      "key": "assets_url",
+      "label": "Fonts and lab from",
+      "type": "text",
+      "default": "",
+      "help": "Leave empty for this marketplace, or a folder on the bot's computer"
+    }
+  ]
+}

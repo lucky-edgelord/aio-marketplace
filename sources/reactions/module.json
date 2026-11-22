@@ -1,0 +1,157 @@
+{
+  "format": "vectiq-module",
+  "version": 1,
+  "id": "reactions",
+  "name": "Anime reactions",
+  "summary": "Drops an anime reaction picture when someone says your trigger words, or mentions a mood. You set the words, the chance and the mode.",
+  "group": "Fun",
+  "release": "1.0.0",
+  "description": "Reactions without any reaction service: the bot decides in Python. Write your own trigger words and phrases per category (one line each, like “happy@80: yay, good news”, where @80 is that line's own chance), or switch on the general mode, where mentioning a mood (sad, thinking, surprised, dance, lunch…) is enough. Pick words, category or both, set how likely a trigger is to fire, the cooldown per channel, which categories and channels are allowed, and whether the bot replies or just posts.\n\n15 categories: angry, calm-down, confused, dance, embarrassed-nervous, happy, lunch-break-time, misc, no, pre-exercise, sad, smug, surprised, thinking, yes. Commands: !react [category], !reactions, and for owners !reactadd and !reactremove.\n\nThe pictures aren't inside this module: 300+ reaction pictures, all optimized to 512×512 and under 1 MB, are downloaded once from this marketplace when first needed and cached. You can also use your own folder (data/reactions/images/<category>/, or another folder in Settings). The pictures come from the shadorki/anime-reaction-api collection and belong to their artists. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+  "author": "lucky-edgelord",
+  "license": "MIT",
+  "homepage": "https://lucky-edgelord.github.io/aio-marketplace/",
+  "tags": [
+    "fun",
+    "images",
+    "triggers",
+    "chat"
+  ],
+  "icon": "media/reactions/icon.png",
+  "images": [
+    {
+      "src": "media/reactions/triggers.jpg",
+      "caption": "A trigger word posts a reaction, with the chance you set"
+    },
+    {
+      "src": "media/reactions/modes.jpg",
+      "caption": "Your own words, the general category mode, or both"
+    }
+  ],
+  "settings": [
+    {
+      "key": "mode",
+      "label": "Trigger mode",
+      "type": "enum",
+      "options": [
+        "both",
+        "words",
+        "category"
+      ],
+      "default": "both",
+      "help": "words: only your trigger lines. category: mentioning a mood is enough. both: your words first, then the mood."
+    },
+    {
+      "key": "triggers",
+      "label": "Trigger words",
+      "type": "longtext",
+      "help": "One line per category: “happy: yay, good news”. Add @chance to a line (“sad@80: rip”). Use “any” for a random category. A line starting with # is off.",
+      "default": "happy: yay, hooray, good news\nsad: rip, f in chat\nyes: sounds good, will do\nno: absolutely not, nope\ndance: let's party"
+    },
+    {
+      "key": "chance",
+      "label": "Chance for your words (%)",
+      "type": "int",
+      "min": 0,
+      "max": 100,
+      "default": 30
+    },
+    {
+      "key": "category_chance",
+      "label": "Chance for the general mode (%)",
+      "type": "int",
+      "min": 0,
+      "max": 100,
+      "default": 15
+    },
+    {
+      "key": "categories",
+      "label": "Categories allowed",
+      "type": "list",
+      "default": [],
+      "help": "Leave empty for all 15. Limits the general mode and random picks."
+    },
+    {
+      "key": "whole_words",
+      "label": "Match whole words only",
+      "type": "bool",
+      "default": true,
+      "help": "Off: “yay” also fires inside “yayyy”."
+    },
+    {
+      "key": "cooldown",
+      "label": "Cooldown per channel (seconds)",
+      "type": "int",
+      "min": 0,
+      "max": 3600,
+      "default": 20
+    },
+    {
+      "key": "max_length",
+      "label": "Ignore messages longer than",
+      "type": "int",
+      "min": 20,
+      "max": 4000,
+      "default": 400
+    },
+    {
+      "key": "channels",
+      "label": "Only in these channels",
+      "type": "list",
+      "default": []
+    },
+    {
+      "key": "allow_dms",
+      "label": "Also in DMs",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "key": "reply",
+      "label": "Reply to the message",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "source",
+      "label": "Pictures from",
+      "type": "enum",
+      "options": [
+        "auto",
+        "local",
+        "online"
+      ],
+      "default": "auto",
+      "help": "auto: your folder when the category has pictures there, else download. local: only your folder. online: only download."
+    },
+    {
+      "key": "header_text",
+      "label": "Text under the header",
+      "type": "text",
+      "default": "",
+      "help": "Optional line in the embed under the category title. {user} is the person's name."
+    },
+    {
+      "key": "images_dir",
+      "label": "Picture folder",
+      "type": "text",
+      "default": "",
+      "help": "Folders named like the categories, each with pictures. Blank: data/reactions/images"
+    },
+    {
+      "key": "base_url",
+      "label": "Picture host",
+      "type": "text",
+      "default": "https://raw.githubusercontent.com/lucky-edgelord/aio-marketplace/main/modules/media/reactions/pictures/",
+      "private": true,
+      "help": "Where the pictures are downloaded from, as <host>/<category>/<picture>. Default: this marketplace."
+    },
+    {
+      "key": "max_mb",
+      "label": "Largest picture (MB)",
+      "type": "number",
+      "min": 0.5,
+      "max": 50,
+      "default": 1
+    }
+  ]
+}

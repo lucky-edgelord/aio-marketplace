@@ -145,6 +145,67 @@
    "sha256": "5fda15a92464e74ba80d3113d76abe0451bd5a821f85b3fc278ba5efa83b9cc1"
   },
   {
+   "id": "reactions",
+   "name": "Anime reactions",
+   "summary": "Drops an anime reaction picture when someone says your trigger words, or mentions a mood. You set the words, the chance and the mode.",
+   "description": "Reactions without any reaction service: the bot decides in Python. Write your own trigger words and phrases per category (one line each, like “happy@80: yay, good news”, where @80 is that line's own chance), or switch on the general mode, where mentioning a mood (sad, thinking, surprised, dance, lunch…) is enough. Pick words, category or both, set how likely a trigger is to fire, the cooldown per channel, which categories and channels are allowed, and whether the bot replies or just posts.\n\n15 categories: angry, calm-down, confused, dance, embarrassed-nervous, happy, lunch-break-time, misc, no, pre-exercise, sad, smug, surprised, thinking, yes. Commands: !react [category], !reactions, and for owners !reactadd and !reactremove.\n\nThe pictures aren't inside this module: 300+ reaction pictures, all optimized to 512×512 and under 1 MB, are downloaded once from this marketplace when first needed and cached. You can also use your own folder (data/reactions/images/<category>/, or another folder in Settings). The pictures come from the shadorki/anime-reaction-api collection and belong to their artists. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+   "group": "Fun",
+   "release": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "https://lucky-edgelord.github.io/aio-marketplace/",
+   "tags": [
+    "fun",
+    "images",
+    "triggers",
+    "chat"
+   ],
+   "kind": "code",
+   "provides": "",
+   "icon": "media/reactions/icon.png",
+   "images": [
+    {
+     "src": "media/reactions/triggers.jpg",
+     "caption": "A trigger word posts a reaction, with the chance you set"
+    },
+    {
+     "src": "media/reactions/modes.jpg",
+     "caption": "Your own words, the general category mode, or both"
+    }
+   ],
+   "commands": [],
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [
+    "Trigger mode",
+    "Trigger words",
+    "Chance for your words (%)",
+    "Chance for the general mode (%)",
+    "Categories allowed",
+    "Match whole words only",
+    "Cooldown per channel (seconds)",
+    "Ignore messages longer than",
+    "Only in these channels",
+    "Also in DMs",
+    "Reply to the message",
+    "Pictures from",
+    "Text under the header",
+    "Picture folder",
+    "Picture host",
+    "Largest picture (MB)"
+   ],
+   "files": [
+    "__init__.py",
+    "catalog.json",
+    "cog.py",
+    "engine.py"
+   ],
+   "packages": [],
+   "file": "reactions.module.json",
+   "bytes": 35485,
+   "sha256": "a008067c135172dd3766461ea3be52d2f439fe66965be8a4bf037f4cd7691468"
+  },
+  {
    "id": "good_vibes",
    "name": "Good vibes",
    "summary": "Reacts to good mornings, thanks and congratulations, and adds !hug and !highfive.",

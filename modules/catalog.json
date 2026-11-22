@@ -209,9 +209,9 @@
    "id": "fable",
    "name": "Fable",
    "summary": "A Mudae-style character gacha: !roll anime characters, react to claim them, then collect, wish, trade, steal and merge.",
-   "description": "Fable is a character-collecting game, in the style of Mudae and the Fable bot. Type !roll and a random anime character appears with a rating from 1 to 5 stars (odds 50/30/15/4/1 percent). React with the claim emoji, or type !claim, and the first person to do so takes the character home. Everyone gets an hourly allowance of rolls and one claim every few hours. Each character belongs to one person per community.\n\nCollect with !harem, look characters up with !im, and !wish for the ones you want so you get first pick when they appear. Put favourites in your !party. !givechar and !trade move characters between people (the other person confirms with a reaction). !steal tries to take one from someone, with a chance set by its rating that grows when the owner has been away. !merge turns five characters of one rating into one of the next. !divorce releases a character for coins; coins also come from !fdaily and buy roll resets and guaranteed high-rating pulls in !fshop with !fbuy. !tu shows your rolls and cooldowns.\n\nThe 2,500 characters were collected from AniList when the module was built; nothing calls an API while playing except downloading each picture once (kept afterwards). Everything is adjustable: rolls per hour, claim cooldown and window, channels, and which features are allowed. This module runs Python, so it needs Settings → Marketplace → Allow modules with code. Cards are drawn from AniList's character pictures, which belong to their rights holders.",
+   "description": "Fable is a character-collecting game, in the style of Mudae and the Fable bot. Type !roll and a random anime character appears with a rating from 1 to 5 stars (odds 50/30/15/4/1 percent). React with the claim emoji, or type !claim, and the first person to do so takes the character home. Everyone gets an hourly allowance of rolls and one claim every few hours. Each character belongs to one person per community.\n\nCollect with !harem, look characters up with !im, and !wish for the ones you want so you get first pick when they appear. Put favourites in your !party. !givechar and !trade move characters between people (the other person confirms with a reaction). !steal tries to take one from someone, with a chance set by its rating that grows when the owner has been away. !merge turns five characters of one rating into one of the next. !divorce releases a character for coins. Coins are the bot's own wallet (!bal, !daily), so they're the same coins as the rest of Vectiq; !fshop sells roll resets and guaranteed high-rating pulls (!fbuy). !tu shows your rolls and cooldowns.\n\nThe 2,500 characters were collected from AniList when the module was built; nothing calls an API while playing except downloading each picture once (kept afterwards). Everything is adjustable: rolls per hour, claim cooldown and window, channels, and which features are allowed. This module runs Python, so it needs Settings → Marketplace → Allow modules with code. Cards are drawn from AniList's character pictures, which belong to their rights holders.",
    "group": "Fun",
-   "release": "1.0.0",
+   "release": "1.1.0",
    "author": "lucky-edgelord",
    "license": "MIT",
    "homepage": "https://github.com/ker0olos/fable",
@@ -252,7 +252,7 @@
     "Hours between steal attempts",
     "Allow !merge",
     "Allow !fshop",
-    "Coins from !fdaily",
+    "Coins from !fdaily (only when Vectiq's economy is off)",
     "Characters per !harem page"
    ],
    "files": [
@@ -264,8 +264,8 @@
    ],
    "packages": [],
    "file": "fable.module.json",
-   "bytes": 252208,
-   "sha256": "d95d46258ee73ac9a3b3612ff6638dae53996f7cbc9a9ae278e0fab84ddf2317"
+   "bytes": 256184,
+   "sha256": "5b08e43be0cf50b1fa087206380266eaca632d8914221b442b7461dc33ebedea"
   },
   {
    "id": "good_vibes",

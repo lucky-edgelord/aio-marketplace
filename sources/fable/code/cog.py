@@ -107,20 +107,20 @@ class Fable(commands.Cog, name="Fable"):
             path.write_bytes(data)
         return path.read_bytes(), path.name
 
-    def card(self, char: engine.Char, lines: str = "") -> str:
-        return f"### {char.name}\n{char.series}\n**{engine.stars(char.stars)}**" + (f"\n{lines}" if lines else "")
-
-    async def send_card(self, channel, char: engine.Char, lines: str = "", reply_to=None):
+    async def send_card(self, channel, char: engine.Char, lines: str = "", reply_to=None, footer: str = ""):
+        """An embed: header (name, series, stars, extra lines), the picture, then the footer."""
+        card = vector.Embed(title=char.name, description="\n".join(p for p in (char.series, f"**{engine.stars(char.stars)}**", lines) if p))
+        card.set_footer(text=" · ".join(p for p in ("Fable", footer) if p))
+        file = None
         try:
             data, name = await asyncio.to_thread(self.fetch_picture, char)
             file = vector.File(data, filename=name, compress=False)
+            card.set_image(url=f"attachment://{name}")
         except Exception as e:  # noqa: BLE001 - a missing picture shouldn't lose the roll
             self.last_error = f"{char.name}: {e}"
             log.warning("Fable: no picture for %s: %s", char.name, e)
-            file = None
-        text = self.card(char, lines)
-        kw = {"file": file} if file else {}
-        return await (reply_to.reply(text, **kw) if reply_to is not None else channel.send(text, **kw))
+        kw = {"embed": card, **({"file": file} if file else {})}
+        return await (reply_to.reply(**kw) if reply_to is not None else channel.send(**kw))
 
     # -- rolling and claiming --------------------------------------------------------------------------------
     def allowance(self, guild: str, user: str, name: str = "") -> tuple[dict, int, float]:
@@ -139,7 +139,7 @@ class Fable(commands.Cog, name="Fable"):
         guild, user, name = self.who(ctx.message)
         p, left, wait = self.allowance(guild, user, name)
         if left <= 0:
-            return await ctx.reply(f"🎴 No rolls left. They come back in **{engine.wait(wait)}**. "
+            return await ctx.reply(f"⏳ No rolls left. They come back in **{engine.wait(wait)}**. "
                                    f"`{self.prefix}fshop` sells a reset.")
         now = time.time()
         self.store.update(guild, user, rolls_used=p["rolls_used"] + 1, window_start=p["window_start"] or now,
@@ -155,10 +155,10 @@ class Fable(commands.Cog, name="Fable"):
         lines = []
         if wishers:
             lines.append(f"💫 Wished by {', '.join(sorted(set(wishers)))}")
-        lines.append(f"-# Belongs to {self.name_of(guild, owner)}" if owner
-                     else f"-# {self.emoji} React to claim · {window}s · {left - 1} roll(s) left")
+        foot = (f"Belongs to {self.name_of(guild, owner)}" if owner
+                else f"{self.emoji} React here to claim · {window}s · {left - 1} roll(s) left")
         async with ctx.channel.typing():
-            sent = await self.send_card(ctx.channel, char, "\n".join(lines))
+            sent = await self.send_card(ctx.channel, char, "\n".join(lines), footer=foot)
         if sent is None or not getattr(sent, "id", None):
             return
         self.store.add_roll(str(sent.id), guild, str(ctx.channel.id), char.id, user)
@@ -173,6 +173,62 @@ class Fable(commands.Cog, name="Fable"):
     def prefix(self) -> str:
         return str(getattr(self.bot.config, "prefix", "!") or "!")
 
+    # -- one look for every reply: views are embeds, results are ✅ / ❌ / ⏳ lines (as in core Vectiq) -------
+    async def view(self, target, title: str, body: str = "", footer: str = "", fields=()):
+        e = vector.Embed(title=title, description=body or None)
+        for name, value, inline in fields:
+            e.add_field(name=name, value=value or "-", inline=inline)
+        e.set_footer(text=" · ".join(p for p in ("Fable", footer) if p))
+        return await target.reply(embed=e)
+
+    @staticmethod
+    def ok(text: str) -> str:
+        return f"✅ {text}"
+
+    @staticmethod
+    def fail(text: str) -> str:
+        return f"❌ {text}"
+
+    # -- coins: the bot's wallet (!bal, !daily), shared with the rest of Vectiq -------------------------------
+    @property
+    def eco(self):
+        return getattr(getattr(self.bot, "stores", None), "economy", None)
+
+    @property
+    def sym(self) -> str:
+        try:
+            return self.bot.config.get("economy.currency_symbol", "🪙") or "🪙"
+        except Exception:  # noqa: BLE001
+            return "🪙"
+
+    @property
+    def start(self) -> int:
+        try:
+            return int(self.bot.config.get("economy.start_balance", 0) or 0)
+        except Exception:  # noqa: BLE001
+            return 0
+
+    def money(self, n: int) -> str:
+        return f"{self.sym} {n:,}"
+
+    async def balance(self, guild: str, user: str) -> int:
+        if self.eco is not None:
+            return (await self.eco.wallet(guild, user, start=self.start)).balance
+        return self.store.player(guild, user)["coins"]
+
+    async def change(self, guild: str, user: str, n: int, reason: str) -> int | None:
+        """Add (or take, if negative) coins. None when they don't have enough."""
+        if self.eco is not None:
+            try:
+                return await self.eco.adjust(guild, user, n, f"fable:{reason}", start=self.start)
+            except Exception as e:  # noqa: BLE001
+                if type(e).__name__ == "InsufficientFunds":
+                    return None
+                raise
+        if self.store.player(guild, user)["coins"] + n < 0:
+            return None
+        return self.store.add_coins(guild, user, n)
+
     async def try_claim(self, channel, roll: dict, user: str, loud: bool) -> None:
         guild, mid = roll["guild"], roll["message_id"]
         char = self.catalog.by_id.get(roll["char_id"])
@@ -182,7 +238,7 @@ class Fable(commands.Cog, name="Fable"):
         window = self.num("claim_window_seconds", 30)
         if now - roll["at"] > window:
             if loud:
-                await channel.send("⌛ That roll has expired. Roll again!")
+                await channel.send(self.fail("That roll has expired. Roll again!"))
             return
         if self.store.owner(guild, char.id):
             return
@@ -190,7 +246,7 @@ class Fable(commands.Cog, name="Fable"):
         priority = self.num("wish_priority_seconds", 10)
         if wishers and user not in wishers and now - roll["at"] < priority:
             if loud:
-                await channel.send(f"💫 {char.name} is wished by someone, who gets first pick for "
+                await channel.send(f"⏳ {char.name} is wished by someone, who gets first pick for "
                                    f"{int(priority - (now - roll['at'])) + 1}s.")
             return
         p = self.store.player(guild, user)
@@ -205,8 +261,8 @@ class Fable(commands.Cog, name="Fable"):
             return
         self.store.update(guild, user, last_claim=now, last_seen=now)
         self.store.log(guild, user, "claim", char.id)
-        await channel.send(f"{self.emoji} **{p['name'] or 'Someone'}** claimed **{char.name}** "
-                           f"({engine.stars(char.stars)}) from {char.series}!")
+        await channel.send(self.ok(f"**{p['name'] or 'Someone'}** claimed **{char.name}** "
+                                   f"({engine.stars(char.stars)}) from {char.series}! {self.emoji}"))
 
     @commands.command(name="claim", help="Claim the latest roll in this channel")
     async def claim(self, ctx):
@@ -214,7 +270,7 @@ class Fable(commands.Cog, name="Fable"):
         self.store.player(guild, user, name)
         roll = self.store.latest_roll(str(ctx.channel.id))
         if roll is None or roll["guild"] != guild:
-            return await ctx.reply("🎴 Nothing to claim here. `!roll` first.")
+            return await ctx.reply(self.fail(f"Nothing to claim here. `{self.prefix}roll` first."))
         await self.try_claim(ctx.channel, roll, user, loud=True)
 
     # -- reactions: claiming and confirming ------------------------------------------------------------------
@@ -249,8 +305,10 @@ class Fable(commands.Cog, name="Fable"):
         self.store.player(guild, user, getattr(member, "display_name", "") or "")
         await self.try_claim(channel, roll, user, loud=False)
 
-    async def confirm(self, ctx, text: str, run, user: str | None = None, seconds: float = 45) -> None:
-        sent = await ctx.reply(f"{text}\n-# React {CONFIRM} within {int(seconds)}s to confirm.")
+    async def confirm(self, ctx, title: str, text: str, run, user: str | None = None, seconds: float = 45) -> None:
+        e = vector.Embed(title=title, description=text)
+        e.set_footer(text=f"Fable · React {CONFIRM} within {int(seconds)}s to confirm")
+        sent = await ctx.reply(embed=e)
         if sent is None or not getattr(sent, "id", None):
             return
         self.pending[str(sent.id)] = {"user": user or str(ctx.author.id), "run": run, "expires": time.time() + seconds}
@@ -287,25 +345,25 @@ class Fable(commands.Cog, name="Fable"):
         page = max(1, int(rest.split()[-1])) if rest.split() and rest.split()[-1].isdigit() else 1
         owned = [self.catalog.by_id[i] for i in self.store.owned_by(guild, target) if i in self.catalog.by_id]
         if not owned:
-            return await ctx.reply(f"🎴 {who} has no characters yet. `{self.prefix}roll` and claim some!")
+            return await ctx.reply(self.fail(f"{who} has no characters yet. `{self.prefix}roll` and claim some!"))
         owned.sort(key=lambda c: (-c.stars, c.name))
         size = int(self.num("page_size", 10))
         pages = (len(owned) + size - 1) // size
         page = min(page, pages)
         rows = [f"{engine.STAR * c.stars} **{c.name}** · {c.series}" for c in owned[(page - 1) * size: page * size]]
-        await ctx.reply(f"### {who}'s characters ({len(owned)})\n" + "\n".join(rows) + f"\n-# Page {page}/{pages}")
+        await self.view(ctx, f"🎴 {who}'s characters ({len(owned)})", "\n".join(rows),
+                        footer=f"Page {page}/{pages}" + (f" · {self.prefix}harem {page + 1} for more" if page < pages else ""))
 
     @commands.command(name="im", aliases=["character", "info"], help="Look up a character: !im <name>")
     async def im(self, ctx, *, name: str = ""):
         guild, *_ = self.who(ctx.message)
         found = self.catalog.find(name)
         if not found:
-            return await ctx.reply("🎴 I don't know that character.")
+            return await ctx.reply(self.fail("I don't know that character."))
         char, owner = found[0], self.store.owner(guild, found[0].id)
-        extra = [f"-# Belongs to {self.name_of(guild, owner)}" if owner else "-# Nobody has them yet"]
-        if len(found) > 1:
-            extra.append("-# Also: " + ", ".join(c.name for c in found[1:5]))
-        await self.send_card(ctx.channel, char, "\n".join(extra), reply_to=ctx.message)
+        foot = f"Belongs to {self.name_of(guild, owner)}" if owner else "Nobody has them yet"
+        also = ("Also: " + ", ".join(c.name for c in found[1:5])) if len(found) > 1 else ""
+        await self.send_card(ctx.channel, char, also, reply_to=ctx.message, footer=foot)
 
     @commands.command(name="wish", aliases=["wishlist"], help="Wishes: !wish add|remove <name>, !wish")
     async def wish(self, ctx, *, text: str = ""):
@@ -316,14 +374,16 @@ class Fable(commands.Cog, name="Fable"):
         if verb in ("add", "remove", "del") and rest:
             found = self.catalog.find(rest)
             if not found:
-                return await ctx.reply("🎴 I don't know that character.")
+                return await ctx.reply(self.fail("I don't know that character."))
             on = verb == "add"
             self.store.wish(guild, user, found[0].id, on)
-            return await ctx.reply(f"💫 {'Wishing for' if on else 'No longer wishing for'} **{found[0].name}**. "
-                                   + ("You get first pick when they show up." if on else ""))
+            return await ctx.reply(self.ok(f"{'Wishing for' if on else 'No longer wishing for'} **{found[0].name}**. "
+                                           + ("You get first pick when they show up." if on else "")))
         wishes = [self.catalog.by_id[i] for i in self.store.wishes(guild, user) if i in self.catalog.by_id]
-        await ctx.reply("💫 Your wishes:\n" + "\n".join(f"{engine.STAR * c.stars} **{c.name}** · {c.series}" for c in wishes)
-                        if wishes else f"💫 No wishes yet. `{self.prefix}wish add <name>`")
+        if not wishes:
+            return await ctx.reply(self.fail(f"No wishes yet. `{self.prefix}wish add <name>`"))
+        await self.view(ctx, "💫 Your wishes", "\n".join(f"{engine.STAR * c.stars} **{c.name}** · {c.series}" for c in wishes),
+                        footer=f"{self.prefix}wish remove <name>")
 
     @commands.command(name="party", help="Your party of five: !party, !party <1-5> <name>, !party clear <1-5>")
     async def party(self, ctx, *, text: str = ""):
@@ -335,14 +395,14 @@ class Fable(commands.Cog, name="Fable"):
         elif parts and parts[0] in ("1", "2", "3", "4", "5") and len(parts) > 1:
             found = self.mine(guild, user, parts[1])
             if not found:
-                return await ctx.reply("🎴 You don't have a character called that.")
+                return await ctx.reply(self.fail("You don't have a character called that."))
             self.store.set_party(guild, user, int(parts[0]), found[0].id)
         slots = self.store.party(guild, user)
         rows = []
         for slot in range(1, 6):
             c = self.catalog.by_id.get(slots.get(slot))
             rows.append(f"{slot}. " + (f"{engine.STAR * c.stars} **{c.name}** · {c.series}" if c else "—"))
-        await ctx.reply("### Your party\n" + "\n".join(rows))
+        await self.view(ctx, "⚔️ Your party", "\n".join(rows), footer=f"{self.prefix}party <1-5> <name>")
 
     # -- giving, trading, stealing, merging --------------------------------------------------------------------
     async def move(self, guild: str, char: engine.Char, to: str) -> None:
@@ -351,109 +411,110 @@ class Fable(commands.Cog, name="Fable"):
     @commands.command(name="givechar", aliases=["gift"], help="Give a character away: !givechar @person <name>")
     async def give(self, ctx, *, text: str = ""):
         if not self.flag("allow_trading"):
-            return await ctx.reply("🎴 Trading is off here.")
+            return await ctx.reply(self.fail("Trading is off here."))
         guild, user, name = self.who(ctx.message)
         person, rest = self.split_mention(ctx.message, text)
         if person is None or not rest:
-            return await ctx.reply(f"Use `{self.prefix}givechar @person <character>`.")
+            return await ctx.reply(self.fail(f"Use `{self.prefix}givechar @person <character>`."))
         found = self.mine(guild, user, rest)
         if not found:
-            return await ctx.reply("🎴 You don't have a character called that.")
+            return await ctx.reply(self.fail("You don't have a character called that."))
         char, to = found[0], str(person.id)
         if to == user:
-            return await ctx.reply("🎴 That's you!")
+            return await ctx.reply(self.fail("That's you!"))
         self.store.player(guild, to, getattr(person, "display_name", None) or getattr(person, "name", "") or "")
         await self.move(guild, char, to)
         self.store.log(guild, user, "give", char.id)
-        await ctx.reply(f"🎁 **{char.name}** now belongs to {self.name_of(guild, to)}.")
+        await ctx.reply(self.ok(f"**{char.name}** now belongs to {self.name_of(guild, to)}. 🎁"))
 
     @commands.command(name="trade", help="Trade: !trade @person <yours> / <theirs>")
     async def trade(self, ctx, *, text: str = ""):
         if not self.flag("allow_trading"):
-            return await ctx.reply("🎴 Trading is off here.")
+            return await ctx.reply(self.fail("Trading is off here."))
         guild, user, name = self.who(ctx.message)
         person, rest = self.split_mention(ctx.message, text)
         if person is None or "/" not in rest:
-            return await ctx.reply(f"Use `{self.prefix}trade @person <your character> / <their character>`.")
+            return await ctx.reply(self.fail(f"Use `{self.prefix}trade @person <your character> / <their character>`."))
         mine_q, theirs_q = (s.strip() for s in rest.split("/", 1))
         other = str(person.id)
         oname = getattr(person, "display_name", None) or getattr(person, "name", None) or "them"
         self.store.player(guild, other, oname)
         a, b = self.mine(guild, user, mine_q), self.mine(guild, other, theirs_q)
         if not a or not b or other == user:
-            return await ctx.reply("🎴 Both of you need to own the characters named.")
+            return await ctx.reply(self.fail("Both of you need to own the characters named."))
         ca, cb = a[0], b[0]
 
         async def run():
             if self.store.owner(guild, ca.id) != user or self.store.owner(guild, cb.id) != other:
-                return await ctx.channel.send("🎴 The trade fell through: ownership changed.")
+                return await ctx.channel.send(self.fail("The trade fell through: ownership changed."))
             await self.move(guild, ca, other)
             await self.move(guild, cb, user)
             self.store.log(guild, user, "trade", ca.id)
-            await ctx.channel.send(f"🔁 Traded: **{ca.name}** ↔ **{cb.name}**.")
+            await ctx.channel.send(self.ok(f"Traded **{ca.name}** ↔ **{cb.name}**. 🔁"))
 
-        await self.confirm(ctx, f"🔁 {name} offers **{ca.name}** ({engine.stars(ca.stars)}) for {oname}'s "
+        await self.confirm(ctx, "🔁 Trade offer", f"{name} offers **{ca.name}** ({engine.stars(ca.stars)}) for {oname}'s "
                            f"**{cb.name}** ({engine.stars(cb.stars)}). {oname}, do you accept?", run, user=other)
 
     @commands.command(name="steal", help="Try to steal a character from someone: !steal <name>")
     async def steal(self, ctx, *, name: str = ""):
         if not self.flag("allow_stealing"):
-            return await ctx.reply("🎴 Stealing is off here.")
+            return await ctx.reply(self.fail("Stealing is off here."))
         guild, user, uname = self.who(ctx.message)
         p = self.store.player(guild, user, uname)
         found = self.catalog.find(name)
         char = next((c for c in found if self.store.owner(guild, c.id)), None)
         if char is None:
-            return await ctx.reply("🎴 Nobody owns a character like that.")
+            return await ctx.reply(self.fail("Nobody owns a character like that."))
         owner = self.store.owner(guild, char.id)
         if owner == user:
-            return await ctx.reply("🎴 That one's already yours.")
+            return await ctx.reply(self.fail("That one's already yours."))
         now = time.time()
         cool = p["last_steal"] + self.num("steal_cooldown_hours", 24) * 3600 - now
         if cool > 0:
-            return await ctx.reply(f"🥷 You can try again in **{engine.wait(cool)}**.")
+            return await ctx.reply(f"⏳ You can try stealing again in **{engine.wait(cool)}**.")
         cost = int(self.num("steal_cost", 50))
-        if p["coins"] < cost:
-            return await ctx.reply(f"🥷 Stealing costs **{cost}** coins; you have {p['coins']}.")
+        if cost and await self.change(guild, user, -cost, "steal") is None:
+            return await ctx.reply(self.fail(f"Stealing costs **{self.money(cost)}**; you have "
+                                             f"{self.money(await self.balance(guild, user))}."))
         inactive = (now - self.store.player(guild, owner)["last_seen"]) / 86400 if self.store.player(guild, owner)["last_seen"] else 30
         chance = engine.steal_chance(char.stars, inactive)
-        self.store.add_coins(guild, user, -cost)
         self.store.update(guild, user, last_steal=now, last_seen=now)
         if self.rng.randrange(100) < chance:
             await self.move(guild, char, user)
             self.store.log(guild, user, "steal", char.id)
-            await ctx.reply(f"🥷 Success! (**{chance}%** chance) **{char.name}** is yours now.")
+            await ctx.reply(self.ok(f"Stolen! (**{chance}%** chance) **{char.name}** is yours now. 🥷"))
         else:
             self.store.log(guild, user, "steal-failed", char.id)
-            await ctx.reply(f"🥷 {self.name_of(guild, owner)} noticed. (**{chance}%** chance) Better luck tomorrow.")
+            await ctx.reply(self.fail(f"{self.name_of(guild, owner)} noticed. (**{chance}%** chance) Better luck next time."))
 
     @commands.command(name="merge", help="Merge five characters into one of a higher rating: !merge <2-5>")
     async def merge(self, ctx, target: int = 0):
         if not self.flag("allow_merging"):
-            return await ctx.reply("🎴 Merging is off here.")
+            return await ctx.reply(self.fail("Merging is off here."))
         guild, user, name = self.who(ctx.message)
         owned = [self.catalog.by_id[i] for i in self.store.owned_by(guild, user) if i in self.catalog.by_id]
         protected = set(self.store.party(guild, user).values())
         group = engine.merge_group(owned, target, protected) if 2 <= target <= 5 else None
         if group is None:
-            return await ctx.reply(f"🎴 Use `{self.prefix}merge <2-5>`. It takes five {max(1, target - 1)}★ characters "
-                                   "(not in your party) to make one new {target}★.".replace("{target}", str(target)))
+            return await ctx.reply(self.fail(f"Use `{self.prefix}merge <2-5>`. It takes five {max(1, target - 1)}★ characters "
+                                   "(not in your party) to make one new {target}★.".replace("{target}", str(target))))
         free = [c for c in self.catalog.by_stars[target] if not self.store.owner(guild, c.id)]
         if not free:
-            return await ctx.reply(f"🎴 Every {target}★ character already has an owner.")
+            return await ctx.reply(self.fail(f"Every {target}★ character already has an owner."))
 
         async def run():
             have = {c.id for c in group if self.store.owner(guild, c.id) == user}
             if len(have) < len(group):
-                return await ctx.channel.send("🎴 The merge fell through: you no longer own all five.")
+                return await ctx.channel.send(self.fail("The merge fell through: you no longer own all five."))
             new = self.rng.choice([c for c in free if not self.store.owner(guild, c.id)] or free)
             for c in group:
                 self.store.release(guild, c.id)
             self.store.claim(guild, new.id, user)
             self.store.log(guild, user, "merge", new.id)
-            await self.send_card(ctx.channel, new, f"-# Merged from {', '.join(c.name for c in group)}")
+            await self.send_card(ctx.channel, new, f"Merged from {', '.join(c.name for c in group)}",
+                                 footer=f"New for {name}")
 
-        await self.confirm(ctx, "🧬 Merge " + ", ".join(f"**{c.name}**" for c in group) + f" into a random "
+        await self.confirm(ctx, "🧬 Merge", "Merge " + ", ".join(f"**{c.name}**" for c in group) + f" into a random "
                            f"**{target}★** character?", run)
 
     @commands.command(name="divorce", aliases=["release"], help="Release a character for coins: !divorce <name>")
@@ -461,7 +522,7 @@ class Fable(commands.Cog, name="Fable"):
         guild, user, uname = self.who(ctx.message)
         found = self.mine(guild, user, name) if name else []
         if not found:
-            return await ctx.reply("🎴 You don't have a character called that.")
+            return await ctx.reply(self.fail("You don't have a character called that."))
         char = found[0]
         value = engine.VALUE[char.stars]
 
@@ -469,24 +530,29 @@ class Fable(commands.Cog, name="Fable"):
             if self.store.owner(guild, char.id) != user:
                 return
             self.store.release(guild, char.id)
-            coins = self.store.add_coins(guild, user, value)
+            coins = await self.change(guild, user, value, "release")
             self.store.log(guild, user, "release", char.id)
-            await ctx.channel.send(f"👋 **{char.name}** is free again. You got **{value}** coins ({coins} total).")
+            await ctx.channel.send(self.ok(f"**{char.name}** is free again. You got **{self.money(value)}** "
+                                           f"({self.money(coins or 0)} total)."))
 
-        await self.confirm(ctx, f"👋 Release **{char.name}** ({engine.stars(char.stars)}) for **{value}** coins?", run)
+        await self.confirm(ctx, "👋 Release", f"Release **{char.name}** ({engine.stars(char.stars)}) for **{self.money(value)}**?", run)
 
     # -- coins, daily, shop and status ----------------------------------------------------------------------------
-    @commands.command(name="fdaily", aliases=["fabledaily"], help="Collect your daily coins")
+    @commands.command(name="fdaily", aliases=["fabledaily"], help="Daily coins (only when Vectiq's economy is off)")
     async def daily(self, ctx):
+        if self.eco is not None:
+            return await ctx.reply(self.fail(f"Fable uses your wallet: `{self.prefix}daily` collects coins, "
+                                             f"`{self.prefix}bal` shows them."))
         guild, user, name = self.who(ctx.message)
         p = self.store.player(guild, user, name)
         now = time.time()
         left = p["daily_at"] + 20 * 3600 - now
         if left > 0:
-            return await ctx.reply(f"🪙 Come back in **{engine.wait(left)}** for more.")
-        coins = self.store.add_coins(guild, user, int(self.num("daily_coins", 100)))
+            return await ctx.reply(f"⏳ Come back in **{engine.wait(left)}** for more.")
+        amount = int(self.num("daily_coins", 100))
+        coins = self.store.add_coins(guild, user, amount)
         self.store.update(guild, user, daily_at=now)
-        await ctx.reply(f"🪙 +{int(self.num('daily_coins', 100))} coins! You have **{coins}**.")
+        await ctx.reply(self.ok(f"You got **{self.money(amount)}**. You have {self.money(coins)}."))
 
     @commands.command(name="tu", aliases=["rolls", "status"], help="Your rolls, claim and coins")
     async def tu(self, ctx):
@@ -494,54 +560,53 @@ class Fable(commands.Cog, name="Fable"):
         p, left, wait = self.allowance(guild, user, name)
         per = int(self.num("rolls_per_hour", 10))
         ready_in = p["last_claim"] + self.num("claim_cooldown_hours", 3) * 3600 - time.time()
-        rows = [f"🎴 **{left}/{per}** rolls left" + (f" · renew in {engine.wait(wait)}" if wait else ""),
-                f"{self.emoji} Claim " + ("**ready**" if ready_in <= 0 else f"in **{engine.wait(ready_in)}**"),
-                f"🪙 **{p['coins']}** coins · {len(self.store.owned_by(guild, user))} characters"]
+        fields = [("Rolls", f"**{left}/{per}**" + (f" · renew in {engine.wait(wait)}" if wait else ""), True),
+                  ("Claim", "**ready**" if ready_in <= 0 else f"in **{engine.wait(ready_in)}**", True),
+                  ("Wallet", self.money(await self.balance(guild, user)), True),
+                  ("Characters", str(len(self.store.owned_by(guild, user))), True)]
         if p["guarantee"]:
-            rows.append(f"✨ Your next roll is **{p['guarantee']}★ or better**")
-        await ctx.reply("\n".join(rows))
+            fields.append(("Next roll", f"**{p['guarantee']}★ or better**", True))
+        await self.view(ctx, f"🎴 {name}", fields=fields, footer=f"{self.prefix}roll · {self.prefix}fshop")
 
     @commands.command(name="fshop", aliases=["fableshop"], help="See what coins buy")
     async def shop(self, ctx):
         if not self.flag("allow_shop"):
-            return await ctx.reply("🎴 The shop is closed.")
+            return await ctx.reply(self.fail("The shop is closed."))
         s = engine.SHOP
-        await ctx.reply("### 🪙 Shop\n"
-                        f"`reset` · **{s['reset']}** · a fresh set of rolls right now\n"
-                        f"`guarantee3` · **{s['guarantee3']}** · your next roll is 3★ or better\n"
-                        f"`guarantee4` · **{s['guarantee4']}** · your next roll is 4★ or better\n"
-                        f"`guarantee5` · **{s['guarantee5']}** · your next roll is a 5★\n"
-                        f"-# {self.prefix}fbuy <item>")
+        rows = [("reset", "A fresh set of rolls right now"), ("guarantee3", "Your next roll is 3★ or better"),
+                ("guarantee4", "Your next roll is 4★ or better"), ("guarantee5", "Your next roll is a 5★")]
+        await self.view(ctx, "🛒 Fable shop", "\n".join(f"`{k}` · **{self.money(s[k])}** · {d}" for k, d in rows),
+                        footer=f"{self.prefix}fbuy <item> · coins come from {self.prefix}daily")
 
     @commands.command(name="fbuy", aliases=["fablebuy"], help="Buy from the shop: !fbuy <item>")
     async def buy(self, ctx, item: str = ""):
         if not self.flag("allow_shop"):
-            return await ctx.reply("🎴 The shop is closed.")
+            return await ctx.reply(self.fail("The shop is closed."))
         guild, user, name = self.who(ctx.message)
-        p = self.store.player(guild, user, name)
+        self.store.player(guild, user, name)
         item = item.lower()
         cost = engine.SHOP.get(item)
         if cost is None:
-            return await ctx.reply(f"🎴 No such item. See `{self.prefix}fshop`.")
-        if p["coins"] < cost:
-            return await ctx.reply(f"🪙 That costs **{cost}**; you have {p['coins']}.")
-        self.store.add_coins(guild, user, -cost)
+            return await ctx.reply(self.fail(f"No such item. See `{self.prefix}fshop`."))
+        left = await self.change(guild, user, -cost, f"buy-{item}")
+        if left is None:
+            have = await self.balance(guild, user)
+            return await ctx.reply(self.fail(f"**{item}** costs **{self.money(cost)}**; you have {self.money(have)}."))
         if item == "reset":
             self.store.update(guild, user, rolls_used=0, window_start=0)
         else:
             self.store.update(guild, user, guarantee=int(item[-1]))
-        await ctx.reply(f"🪙 Bought **{item}**. {self.store.player(guild, user)['coins']} coins left.")
+        await ctx.reply(self.ok(f"Bought **{item}** for {self.money(cost)}. You have {self.money(left)} left."))
 
     @commands.command(name="fable", aliases=["gacha"], help="How Fable works")
     async def fable(self, ctx):
         p = self.prefix
-        await ctx.reply(
-            "### 🎴 Fable\n"
-            f"`{p}roll` a character · react {self.emoji} (or `{p}claim`) to take it · "
-            f"{int(self.num('rolls_per_hour', 10))} rolls an hour, one claim every {self.num('claim_cooldown_hours', 3):g}h\n"
-            f"`{p}harem` your characters · `{p}im <name>` look one up · `{p}wish add <name>` · `{p}party`\n"
-            f"`{p}givechar` · `{p}trade` · `{p}steal` · `{p}merge <2-5>` · `{p}divorce <name>`\n"
-            f"`{p}fdaily` · `{p}tu` your status · `{p}fshop` and `{p}fbuy`")
+        await self.view(ctx, "🎴 Fable", (
+            f"Roll a character with `{p}roll`, then react {self.emoji} (or `{p}claim`) to take it. "
+            f"{int(self.num('rolls_per_hour', 10))} rolls an hour, one claim every {self.num('claim_cooldown_hours', 3):g}h."),
+            fields=[("Collect", f"`{p}harem` · `{p}im <name>` · `{p}wish add <name>` · `{p}party`", False),
+                    ("Swap", f"`{p}givechar` · `{p}trade` · `{p}steal` · `{p}merge <2-5>` · `{p}divorce <name>`", False),
+                    ("Coins", f"`{p}tu` · `{p}fshop` · `{p}fbuy` · your wallet: `{p}bal`, `{p}daily`", False)])
 
     # -- dashboard -----------------------------------------------------------------------------------------------
     async def dashboard_panel(self, guild, viewer):

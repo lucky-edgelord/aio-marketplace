@@ -4,6 +4,7 @@
  "repo": "lucky-edgelord/aio-marketplace",
  "groups": [
   "Community",
+  "Education",
   "Fun",
   "Safety",
   "Utility"
@@ -112,6 +113,62 @@
    "file": "server_rules.module.json",
    "bytes": 1552,
    "sha256": "0e81d35a0ccbbf0254ece0bbbda14dab63f6da148ea5ac8ac85a00e16bac933f"
+  },
+  {
+   "id": "quantum",
+   "name": "Quantum",
+   "summary": "Quantum circuits in chat: write them in Q text, micro QASM or MicroQiskit and get an IBM-style picture with probabilities and Bloch spheres.",
+   "description": "Quantum brings the Quantum Web Lab into chat. Send !qc with a circuit in a code block and the bot answers with a picture in the style of IBM Quantum Composer: the circuit with colour-coded gates, the measured results or exact probabilities, and a 3D Bloch sphere for every qubit.\n\nWrite circuits the way you like: Q text (H-X#0-M, one row per qubit), micro QASM (OpenQASM 3 or 2), MicroQiskit (Qiskit-style Python: qc = QuantumCircuit(2, 2), qc.h(0), qc.cx(0, 1)), or console lines (h 0, cx 0 1). Or build your own circuit a step at a time: !qc h 0, !qc cx 0 1, !qc run, !qc undo, !qc reset, !qc explain h. Add shots=2000 seed=7 on the first line, text for the results as text (a diagram, bars and Bloch arrows in code blocks), or -> qasm, -> qasm2, -> python, -> q or -> diagram to convert a circuit instead of running it. !qlab sends the whole Quantum Web Lab as a mini app: a touch composer with a Bloch sphere, code in three languages, a console and challenges.\n\nUp to 12 qubits. MicroQiskit code is never run as real Python: a small interpreter reads only circuit code (assignments, for, if, print, MicroQiskit and math), with limits on steps, gates and output. Like Qiskit, qubit 0 is the right-most digit of a result. Fonts are IBM Plex (SIL Open Font License); the fonts and the lab (about 1 MB) are downloaded from this marketplace the first time they're needed. This module runs Python, so it needs Settings → Marketplace → Allow modules with code.",
+   "group": "Education",
+   "release": "1.0.0",
+   "author": "lucky-edgelord",
+   "license": "MIT",
+   "homepage": "https://github.com/lucky-edgelord/quantum-web-lab",
+   "tags": [
+    "quantum",
+    "education",
+    "science",
+    "qiskit",
+    "qasm"
+   ],
+   "kind": "code",
+   "provides": "",
+   "icon": "media/quantum/icon.png",
+   "images": [
+    {
+     "src": "media/quantum/ghz.webp",
+     "caption": "A GHZ state in Q text: the circuit, 1,024 shots and Bloch spheres"
+    },
+    {
+     "src": "media/quantum/bloch.webp",
+     "caption": "MicroQiskit code with exact probabilities and each qubit's arrow"
+    }
+   ],
+   "commands": [],
+   "autoresponders": 0,
+   "timers": 0,
+   "settings": [
+    "Only in these channels",
+    "Also in DMs",
+    "Answer with",
+    "Shots",
+    "Most qubits",
+    "Most gates",
+    "Bloch spheres shown",
+    "Fonts and lab from"
+   ],
+   "files": [
+    "__init__.py",
+    "cog.py",
+    "microqiskit.py",
+    "qtext.py",
+    "render.py",
+    "safepy.py"
+   ],
+   "packages": [],
+   "file": "quantum.module.json",
+   "bytes": 95435,
+   "sha256": "2c0377bae871bb1b2c804d159e7e74474099360cab41ace7538ffc9671a3a229"
   },
   {
    "id": "magic_8ball",
